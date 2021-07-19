@@ -10,7 +10,6 @@
         "*.synctex.gz": true,
         "*.fls": true,
         "*.fdb_latexmk": true,
-        "ACM-Reference-Format*":true,
-        "acmart.*":true
+        "*.bst": true
     }
 }
