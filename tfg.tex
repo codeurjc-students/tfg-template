@@ -29,7 +29,7 @@
 
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{afterpage}
 \usepackage{paralist}
 \usepackage{array}
@@ -111,6 +111,12 @@
 \floatname{algorithm}{Algoritmo}
 
 \newfloat{algorithm}{t}{lop}
+
+%% Etiquetas de comentarios (tutor/alumno)
+\newif\ifdraft
+\drafttrue
+\usepackage{subcaption}
+\input{macros}
 
 
 %\newenvironment{pseudocodigo}[1][htb]
@@ -509,9 +515,9 @@ Contexto. Situar al lector. Objetivo general y alcance del trabajo.
 
 \section{Estructura del documento}
 
-La estructura del TFG no es fija. El tutor indicará una estructura adecuada dependiendo del trabajo concreto.
+La estructura del TFG no es fija. El tutor indicará una estructura adecuada dependiendo del trabajo concreto.\tutor{Comentario del tutor}
 
-Se puede incluir dentro de cada apartado secciones adicionales. La copia en papel de la memoria del TFG será encuadernada en pasta dura de color azul (p.e. encuadernación tipo chanel). La portada, que puede ser una pegatina transparente, seguirá el modelo que se adjunta, que incluye el escudo y nombre de la URJC, la titulación cursada por el alumno, el curso académico, el título del TFG, el autor y el o los directores/tutores.
+Se puede incluir dentro de cada apartado secciones adicionales. La copia en papel de la memoria del TFG será encuadernada en pasta dura de color azul (p.e. encuadernación tipo chanel). La portada, que puede ser una pegatina transparente, seguirá el modelo que se adjunta, que incluye el escudo y nombre de la URJC, la titulación cursada por el alumno, el curso académico, el título del TFG, el autor y el o los directores/tutores.\alumno{Comentario del alumno}
 
 
 \subsection{Trabajos de grados en informática}

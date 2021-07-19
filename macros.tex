@@ -1,0 +1,27 @@
+\newcommand{\nb}[2]{
+	{
+		{\color{black}{
+				\small\fbox{\bfseries\sffamily\scriptsize#1}
+				{\sffamily\small$\triangleright~${\it\sffamily\small #2}$~\triangleleft$}
+	}}}
+}
+
+\ifdraft
+\newcommand\tutor[1]{\nb{Tutor}{\color{red}#1}}
+\newcommand\alumno[1]{\nb{Alumno}{\color{blue}#1}}
+\newcommand\cotutor[1]{\nb{Co-tutor}{\color{green}#1}}
+\newcommand{\fixme}[1]{{\textcolor{red}{[FIXME] #1}}\xspace}
+\newcommand{\cn}{{\color{violet}[citation required]}}
+
+\else
+%\usepackage[disable]{todonotes}
+\newcommand\tutor[1]{}
+\newcommand\alumno[1]{}
+\newcommand\cotutor[1]{}
+\newcommand{\fixme}[1]{}
+\newcommand{\cn}{}
+
+\fi
+
+
+
