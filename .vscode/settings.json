@@ -1,0 +1,16 @@
+{
+    // The following will hide the js and map files in the editor
+    "files.exclude": {
+        "*.aux": true,
+        "*.bbl": true,
+        "*.blg": true,
+        "*.log": true,
+        "*.out": true,
+        "*.spl": true,
+        "*.synctex.gz": true,
+        "*.fls": true,
+        "*.fdb_latexmk": true,
+        "ACM-Reference-Format*":true,
+        "acmart.*":true
+    }
+}
