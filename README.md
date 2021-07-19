@@ -42,3 +42,13 @@ $ docker pull tianon/latex
 ```
 
 Los archivos resultantes estarán situados en la carpeta `out/`
+
+## Diferencias respecto a la plantilla oficial
+
+Respecto a la plantilla oficial, se han añadido nuevas funcionalidades, así como documentación y una nueva propuesta de estructura:
+
+* Se incluye documentación sobre la instalación de LaTeX y los plugins para trabajar en un IDE (VSCode).
+  * Se incluye la carpeta _.vscoce/_ para no mostrar ficheros intermedios de compilación
+  * Propuesta para trabajar con contenedores Docker
+* El documento _tfg.tex_ ahora referencia a distintas páginas de la carpeta _pages_ para facilitar la navegación.
+* Se añade una macro para comentar apropiadamente el PDF final, con el fin de que alumno y profesor puedan dejar retroalimentación de manera sencilla en cualquier sección utilizando `\tutor{Un comentario}` o `\alumno{Otro comentario}`
