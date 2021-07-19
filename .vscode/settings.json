@@ -10,6 +10,10 @@
         "*.synctex.gz": true,
         "*.fls": true,
         "*.fdb_latexmk": true,
-        "*.bst": true
+        "*.bst": true,
+        "*.lof": true,
+        "*.lol": true,
+        "*.lot": true,
+        "*.toc": true,
     }
 }
