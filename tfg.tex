@@ -1,370 +1,29 @@
 % Clase del documento
 \documentclass[12pt,twoside,titlepage]{report}
 
+% Configuración
+\include{config/config.tex}
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%% Paquetes %%%%%%%%%%%%%%%%%%%%%%%
-
-\usepackage[a4paper,bindingoffset=3mm,bottom=35mm]{geometry}
-
-
-% Usad \usepackage[dvips]{graphicx} o \usepackage[pdftex]{graphicx} (no ambos)
-%\usepackage[dvips]{graphicx} %%% para LaTeX. Las figuras deben estar en formato eps
-
-\usepackage[colorlinks=true,pdftex]{hyperref}   %%% Opcional. Para incluir marcadores y enlaces en el pdf
-\usepackage[pdftex]{graphicx}  %%% para pdflatex. Las figuras pueden estar en pdf, jpg, svg y otros formatos
-
-
-\usepackage[spanish]{babel}
-
-%\usepackage[latin1]{inputenc} % Usad en WinEdt/MikTex
-\usepackage[utf8]{inputenc} % Usad en overleaf
-
-%\usepackage[T1]{fontenc}
-
-
-% Algunos paquetes útiles
-
-\usepackage{amsmath,amssymb}
-\usepackage{hyperref}
-\usepackage{xcolor}
-\usepackage{afterpage}
-\usepackage{paralist}
-\usepackage{array}
-\usepackage{enumerate}
-\usepackage{paralist}
-\usepackage{enumitem}
-\usepackage{float}
-\usepackage{setspace}
-\usepackage{listings}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{fancyhdr}
-\usepackage{rotating}
-\usepackage{multirow}
-
-
-% Otros paquetes
-
-\usepackage{quotchap}
-\usepackage{lipsum}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%% Definiciones básicas %%%%%%%%%%%%%%%%%%%%%%%
-
+% A rellenar por el estudiante
 \newcommand{\nombreautor}{Nombre Apellido1 Apellido2}
 \newcommand{\nombretutor}{NombreTutor Apellido1 Apellido2}
 \newcommand{\titulotrabajo}{Título del Trabajo de Fin de Grado}
-\newcommand{\escuela}{Escuela Técnica Superior\\de Ingeniería Informática}
-\newcommand{\escuelalargo}{Escuela Técnica Superior de Ingeniería Informática}
-\newcommand{\universidad}{Universidad Rey Juan Carlos}
-\newcommand{\fecha}{Fecha}
 \newcommand{\grado}{Grado en XXXXXXXX}
 \newcommand{\curso}{Curso 20XX-20XX}
-\newcommand{\logoUniversidad}{logoURJC.pdf} % logoURJC.eps
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%% Otras definiciones %%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Definiciones de colores (para hidelinks)
-\definecolor{BlueLink}{rgb}{0.165,0.322,0.745}
-\definecolor{PinkLink}{rgb}{0.8,0.22,0.5}
-\definecolor{gray}{rgb}{0.6,0.6,0.6}
-
-
-% Enlaces
-\hypersetup{hidelinks,pageanchor=true,colorlinks,citecolor=PinkLink,urlcolor=black,linkcolor=BlueLink}
-
-
-\newcommand\blankpage{%
-    \newpage
-    \null
-    \thispagestyle{empty}%
-    %\addtocounter{page}{-1}%
-    \newpage}
-
-
-% Texto referencias
-\addto{\captionsspanish}{\renewcommand{\bibname}{Bibliografía}}
-
-% Texto Índice de tablas
-\addto\captionsspanish{
-\def\tablename{Tabla}
-\def\listtablename{\'{I}ndice de tablas}
-}
-
-
-\floatname{algorithm}{Algoritmo}
-
-\newfloat{algorithm}{t}{lop}
-
-%% Etiquetas de comentarios (tutor/alumno)
-\newif\ifdraft
-\drafttrue
-\usepackage{subcaption}
-\input{macros}
-
-
-%\newenvironment{pseudocodigo}[1][htb]
-%  {\renewcommand{\algorithmcfname}{Pseudocódig}% Update algorithm name
-%   \begin{algorithm}[#1]%
-%  }{\end{algorithm}}
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%% Estilo de código (en Python) %%%%%%%%%%%%%%%%%%%%%%%
-
-\definecolor{bg}{rgb}{0.95,0.95,0.95}
-\definecolor{mydeepteal}{rgb}{0.16,0.22,0.23}
-\definecolor{myteal}{rgb}{0.31,0.44,0.46}
-\definecolor{mymediumteal}{rgb}{0.41,0.58,0.60}
-
-\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
-\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
-
-
-%\newcommand*{\FormatDigit}[1]{\textcolor{mydeepteal}{#1}}
-\newcommand*{\FormatDigit}[1]{\textcolor{black}{#1}}
-
-% Python style for highlighting
-\newcommand\mypythonstyle{\lstset{
-language=Python,
-basicstyle=\ttfamily\small,
-%basicstyle=\linespread{1.0}\footnotesize\ttm,
-otherkeywords={self},             % Add keywords here
-keywordstyle=\bfseries\ttfamily\color{myteal},
-%keywordstyle=\ttb\color{myteal},
-commentstyle=\itshape\color{myteal},
-stringstyle=\color{mydeepteal},
-emph={MyClass,__init__},          % Custom highlighting
-emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
-% Any extra options here
-showstringspaces=false,            %
-backgroundcolor=\color{bg},
-rulecolor = \color{bg},
-%identifierstyle=\color{deepgreen},
-breaklines=true,
-numbers=left,
-numbersep=5pt,
-numberstyle=\tiny,
-tabsize=4,
-xleftmargin=1em,
-frame = single,
-framesep = 3pt,
-framextopmargin=0pt,
-framexbottommargin=0pt,
-framexleftmargin=0pt,
-framexrightmargin=0pt,
-fontadjust=true,
-basewidth=0.55em, % compactness of code
-upquote=true,
-}}
-
-% Python environment
-\lstnewenvironment{mypython}[1][]
-{
-\mypythonstyle
-\lstset{#1}
-}
-{}
-
-\newcommand\mypythonstylenormalinline{\lstset{
-language=Python,
-basicstyle=\ttfamily\normalsize,
-%basicstyle=\linespread{1.0}\footnotesize\ttm,
-otherkeywords={self},            % Add keywords here
-keywordstyle=\bfseries\ttfamily\color{myteal},
-%keywordstyle=\ttb\color{myteal},
-commentstyle=\itshape\color{mymediumteal},
-stringstyle=\color{mydeepteal},
-emph={MyClass,__init__},          % Custom highlighting
-emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
-% Any extra options here
-showstringspaces=false,            %
-backgroundcolor=\color{bg},
-rulecolor = \color{bg},
-%identifierstyle=\color{deepgreen},
-breaklines=false,
-numbers=left,
-numbersep=5pt,
-numberstyle=\tiny,
-tabsize=4,
-xleftmargin=0em,
-frame = single,
-framesep = 3pt,
-framextopmargin=0pt,
-framexbottommargin=0pt,
-framexleftmargin=0pt,
-framexrightmargin=0pt,
-fontadjust=true,
-%basewidth=0.55em, % compactness of code
-upquote=true,
-}}
-
-\newcommand\mypythoninline[1]{{\mypythonstylenormalinline\lstinline!#1!}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% Comandos definidos por el autor 
-
-\newcommand{\transpuesta}{\mbox{\tiny $\mathsf{T}$}}
-
-
-
-
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           Inicio del documento                       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{document}
 
 \pagestyle{plain}
 
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Portada %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\pagenumbering{gobble}
-%\pagenumbering{arabic}
-
-% Universidad, Facultad
-\begin{titlepage}
-\selectlanguage{spanish}
-
-
-% logo
-\begin{center}
-    \includegraphics[scale=0.7]{\logoUniversidad}
-\end{center}
-
-\bigskip
-
-\begin{center}
-\begin{LARGE}
-\escuela \\
-\end{LARGE}
-\end{center}
-
-\bigskip
-\bigskip
-
-% Grado
-\begin{center}
-\begin{large}
-\textbf{\grado}\\
-\end{large}
-\end{center}
-
-% Curso
-\begin{center}
-\begin{large}
-\textbf{\curso}\\
-\end{large}
-\end{center}
-
-\bigskip
-
-\textbf{\begin{center}
-\begin{large}
-\textbf{Trabajo Fin de Grado}
-\end{large}
-\end{center}}
-
-\bigskip
-\bigskip
-\bigskip
-
-% Nombre del TFG
-\begin{center}
-\textbf{\begin{large}
-\MakeUppercase{\titulotrabajo}\\
-\end{large}}
-\end{center}
-
-% Nombre del autor
-\vspace{\fill}
-\begin{center}
-\textbf{Autor: \nombreautor}\\ \smallskip
-% Tutor
-\textbf{Tutor: \nombretutor}\\
-% Añadir segundo tutor si hubiera
-
-
-\bigskip
-
-% Fecha
-%\textbf{\fecha}\\
-\end{center}
-\end{titlepage}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%% Opcional %%%%%%%%%%%%%%%%%%%%%%
-%\blankpage
-
-%\thispagestyle{empty}
-%\begin{center}
-
-% Nombre del trabajo
-%\textbf{\begin{large}
-%\MakeUppercase{\titulotrabajo}\\*
-%\end{large}}
-%\vspace*{0.2cm}
-%\vspace{5cm}
-
-% Nombre del autor y del tutor
-%\large Autor: \nombreautor \\* \medskip
-%\large Tutor: \nombretutor \\*
-
-%\vfill
-
-% Escuela, universidad y fecha
-%\escuelalargo \\ \smallskip
-%\universidad \\
-%\vspace{1cm}
-%\fecha \\
-
-%\clearpage
-
-%\end{center}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\hypersetup{pageanchor=true}
-
-\normalsize
-\afterpage{\blankpage} % Se deben añadir página en blanco para que lo capítulos de la memoria o estas secciones introductorias empiecen en páginas impares
+\include{config/portada}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
 
 % Estilo de párrafo de los capítulos
 \setlength{\parskip}{0.75em}
@@ -375,32 +34,9 @@ upquote=true,
 \pagenumbering{Roman}
 \setcounter{page}{2}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%% Licencia %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\clearpage
-\pagenumbering{gobble}
-\chapter*{}
-
-\vspace{12cm}
-
-%% Licencia de publicación en abierto elegida
-%% Ver detalles en https://ofilibre.urjc.es/guias/tfg-abierto/
-
-\begin{flushright}
-\includegraphics[scale=0.6]{img/by-sa}
-%\includegraphics[scale=0.6]{img/by}
-
-%% Poner el año adecuado
-\noindent©2025 \nombreautor  \\
-Algunos derechos reservados  \\
-Este documento se distribuye bajo la licencia \\
-``Atribución-CompartirIgual 4.0 Internacional'' de Creative Commons, \\
-disponible en \\
-\url{https://creativecommons.org/licenses/by-sa/4.0/deed.es}
-\end{flushright}
-
-\afterpage{\blankpage}
+\include{config/licencia}
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Agradecimientos o dedicatoria %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -411,10 +47,6 @@ Breves agradecimientos o dedicatoria.
 \afterpage{\blankpage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Resumen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

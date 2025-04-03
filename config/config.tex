@@ -1,0 +1,237 @@
+%%%%%%%%%%%%%%%%%%%%%%% Paquetes %%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[a4paper,bindingoffset=3mm,bottom=35mm]{geometry}
+
+
+% Usad \usepackage[dvips]{graphicx} o \usepackage[pdftex]{graphicx} (no ambos)
+%\usepackage[dvips]{graphicx} %%% para LaTeX. Las figuras deben estar en formato eps
+
+\usepackage[colorlinks=true,pdftex]{hyperref}   %%% Opcional. Para incluir marcadores y enlaces en el pdf
+\usepackage[pdftex]{graphicx}  %%% para pdflatex. Las figuras pueden estar en pdf, jpg, svg y otros formatos
+
+
+\usepackage[spanish]{babel}
+
+%\usepackage[latin1]{inputenc} % Usad en WinEdt/MikTex
+\usepackage[utf8]{inputenc} % Usad en overleaf
+
+%\usepackage[T1]{fontenc}
+
+
+% Algunos paquetes útiles
+
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{afterpage}
+\usepackage{paralist}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{listings}
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  numbers=left,
+  stepnumber=1,
+  basicstyle=\ttfamily\scriptsize,
+  moredelim=**[is][\color{pgrey}]{~}{~}
+}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{fancyhdr}
+\usepackage{rotating}
+\usepackage{multirow}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+% Otros paquetes
+
+\usepackage{quotchap}
+\usepackage{lipsum}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%% Definiciones básicas %%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\escuela}{Escuela Técnica Superior\\de Ingeniería Informática}
+\newcommand{\escuelalargo}{Escuela Técnica Superior de Ingeniería Informática}
+\newcommand{\universidad}{Universidad Rey Juan Carlos}
+\newcommand{\fecha}{Fecha}
+\newcommand{\logoUniversidad}{config/logos/logoURJC.pdf} % logoURJC.eps
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Otras definiciones %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Definiciones de colores (para hidelinks)
+\definecolor{BlueLink}{rgb}{0.165,0.322,0.745}
+\definecolor{PinkLink}{rgb}{0.8,0.22,0.5}
+\definecolor{gray}{rgb}{0.6,0.6,0.6}
+
+
+% Enlaces
+\hypersetup{hidelinks,pageanchor=true,colorlinks,citecolor=PinkLink,urlcolor=black,linkcolor=BlueLink}
+
+
+\newcommand\blankpage{%
+    \newpage
+    \null
+    \thispagestyle{empty}%
+    %\addtocounter{page}{-1}%
+    \newpage}
+
+
+% Texto referencias
+\addto{\captionsspanish}{\renewcommand{\bibname}{Bibliografía}}
+
+% Texto Índice de tablas
+\addto\captionsspanish{
+\def\tablename{Tabla}
+\def\listtablename{\'{I}ndice de tablas}
+}
+
+
+\floatname{algorithm}{Algoritmo}
+
+\newfloat{algorithm}{t}{lop}
+
+%% Etiquetas de comentarios (tutor/alumno)
+\newif\ifdraft
+\drafttrue
+\usepackage{subcaption}
+\input{config/macros}
+
+
+%\newenvironment{pseudocodigo}[1][htb]
+%  {\renewcommand{\algorithmcfname}{Pseudocódig}% Update algorithm name
+%   \begin{algorithm}[#1]%
+%  }{\end{algorithm}}
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%% Estilo de código (en Python) %%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\definecolor{mydeepteal}{rgb}{0.16,0.22,0.23}
+\definecolor{myteal}{rgb}{0.31,0.44,0.46}
+\definecolor{mymediumteal}{rgb}{0.41,0.58,0.60}
+
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+
+%\newcommand*{\FormatDigit}[1]{\textcolor{mydeepteal}{#1}}
+\newcommand*{\FormatDigit}[1]{\textcolor{black}{#1}}
+
+% Python style for highlighting
+\newcommand\mypythonstyle{\lstset{
+language=Python,
+basicstyle=\ttfamily\small,
+%basicstyle=\linespread{1.0}\footnotesize\ttm,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\bfseries\ttfamily\color{myteal},
+%keywordstyle=\ttb\color{myteal},
+commentstyle=\itshape\color{myteal},
+stringstyle=\color{mydeepteal},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
+% Any extra options here
+showstringspaces=false,            %
+backgroundcolor=\color{bg},
+rulecolor = \color{bg},
+%identifierstyle=\color{deepgreen},
+breaklines=true,
+numbers=left,
+numbersep=5pt,
+numberstyle=\tiny,
+tabsize=4,
+xleftmargin=1em,
+frame = single,
+framesep = 3pt,
+framextopmargin=0pt,
+framexbottommargin=0pt,
+framexleftmargin=0pt,
+framexrightmargin=0pt,
+fontadjust=true,
+basewidth=0.55em, % compactness of code
+upquote=true,
+}}
+
+% Python environment
+\lstnewenvironment{mypython}[1][]
+{
+\mypythonstyle
+\lstset{#1}
+}
+{}
+
+\newcommand\mypythonstylenormalinline{\lstset{
+language=Python,
+basicstyle=\ttfamily\normalsize,
+%basicstyle=\linespread{1.0}\footnotesize\ttm,
+otherkeywords={self},            % Add keywords here
+keywordstyle=\bfseries\ttfamily\color{myteal},
+%keywordstyle=\ttb\color{myteal},
+commentstyle=\itshape\color{mymediumteal},
+stringstyle=\color{mydeepteal},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
+% Any extra options here
+showstringspaces=false,            %
+backgroundcolor=\color{bg},
+rulecolor = \color{bg},
+%identifierstyle=\color{deepgreen},
+breaklines=false,
+numbers=left,
+numbersep=5pt,
+numberstyle=\tiny,
+tabsize=4,
+xleftmargin=0em,
+frame = single,
+framesep = 3pt,
+framextopmargin=0pt,
+framexbottommargin=0pt,
+framexleftmargin=0pt,
+framexrightmargin=0pt,
+fontadjust=true,
+%basewidth=0.55em, % compactness of code
+upquote=true,
+}}
+
+\newcommand\mypythoninline[1]{{\mypythonstylenormalinline\lstinline!#1!}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Comandos definidos por el autor 
+
+\newcommand{\transpuesta}{\mbox{\tiny $\mathsf{T}$}}

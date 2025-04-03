@@ -160,21 +160,21 @@ La figura~\ref{fig:logo_universidad} se utiliza en la portada. \LaTeX ubica auto
   \begin{minipage}{0.45\textwidth}
    \centering
 
-     \includegraphics[clip=true,width=\textwidth]{triangulo_grande_bb.pdf}\\
+     \includegraphics[clip=true,width=\textwidth]{img/triangulo_grande_bb.pdf}\\
 
     \footnotesize (a)
   \end{minipage}
   \hfill
   \begin{minipage}{0.45\textwidth}
    \centering
-     \includegraphics[clip=true,width=\textwidth]{triangulos_separados_bb.pdf}\\
+     \includegraphics[clip=true,width=\textwidth]{img/triangulos_separados_bb.pdf}\\
 
    \footnotesize (b)
   \end{minipage}
 
     \bigskip
 
-    \includegraphics[clip=true,width=0.5\textwidth]{triangulos_unidos_bb.pdf}\\
+    \includegraphics[clip=true,width=0.5\textwidth]{img/triangulos_unidos_bb.pdf}\\
     \footnotesize (c)
 
   \caption{Ejemplo con varias figuras. Demostración visual del teorema de Pitágoras. En (a) tenemos un triángulo rectángulo con hipotenusa $c$ y catetos $a$ y $b$. En (b) se muestra tres copias escaladas del mismo triángulo. El verde se ha escalado por $a$, el rojo/rosa por $b$, y el azul por $c$. En (c) se juntan los triángulos de (b) para formar un rectángulo cuya base es $c^{2}$, pero también $a^{2} + b^{2}$. Por tanto, $a^{2} + b^{2} = c^{2}$.}\label{fig:teoremapitagoras}
@@ -207,6 +207,21 @@ def sum_list_limits_1(a, lower, upper):
 El código~\ref{alg:etiqueta} es un ejemplo en Python.
 
 
+\begin{lstlisting}[ caption={Endpoint REST para recuperar un libro por su id}, label={lst:rest}]
+~@GetMapping~("/{id}")
+public ResponseEntity<Book> getBook(~@PathVariable~ long id) {
+  // Comment to explain the code
+  Optional<Book> op = service.findById(id);
+  log.info("Book with id {} found", id);
+  if (op.isPresent()) {
+    Book book = op.get();
+    return new ResponseEntity<>(book, HttpStatus.OK);
+  } else {
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+  }
+}
+\end{lstlisting}
+El código~\ref{lst:rest} es un ejemplo en Java.
 
 \begin{algorithm}
 \begin{algorithmic}[1]
@@ -226,3 +241,7 @@ El código~\ref{alg:etiqueta} es un ejemplo en Python.
 \label{alg:AdditionalLouvain}
 \end{algorithm}
 En el algoritmo~\ref{alg:AdditionalLouvain} aparece un ejemplo en pseudocódigo.
+
+\subsection{Comentarios}
+
+Esto es un ejemplo de texto \tutor{Esto es un comentario del tutor} \alumno{Esto es un comentario del alumno}
