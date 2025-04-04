@@ -208,8 +208,8 @@ El código~\ref{alg:etiqueta} es un ejemplo en Python.
 
 
 \begin{lstlisting}[ caption={Endpoint REST para recuperar un libro por su id}, label={lst:rest}]
-~@GetMapping~("/{id}")
-public ResponseEntity<Book> getBook(~@PathVariable~ long id) {
+@GetMapping("/{id}")
+public ResponseEntity<Book> getBook(@PathVariable long id) {
   // Comment to explain the code
   Optional<Book> op = service.findById(id);
   log.info("Book with id {} found", id);
