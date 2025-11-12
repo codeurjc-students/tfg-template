@@ -6,21 +6,16 @@
 	}}}
 }
 
+\usepackage{todonotes}
 \ifdraft
-\newcommand\tutor[1]{\nb{Tutor}{\color{red}#1}}
-\newcommand\alumno[1]{\nb{Alumno}{\color{blue}#1}}
-\newcommand\cotutor[1]{\nb{Co-tutor}{\color{green}#1}}
-\newcommand{\fixme}[1]{{\textcolor{red}{[FIXME] #1}}\xspace}
-\newcommand{\cn}{{\color{violet}[citation required]}}
+
+% Commands for comments
+\newcommand{\tutor}[1]{\todo[color=red!40, inline]{\footnotesize \textbf{Tutor:} #1}}
+\newcommand{\alumno}[1]{\todo[color=blue!40, inline]{\footnotesize \textbf{Alumno:} #1}}
+\newcommand{\cotutor}[1]{\todo[color=green!40, inline]{\footnotesize \textbf{Co-tutor:} #1}}
 
 \else
-%\usepackage[disable]{todonotes}
-\newcommand\tutor[1]{}
-\newcommand\alumno[1]{}
-\newcommand\cotutor[1]{}
-\newcommand{\fixme}[1]{}
-\newcommand{\cn}{}
-
+\usepackage[disable]{todonotes}
 \fi
 
 
