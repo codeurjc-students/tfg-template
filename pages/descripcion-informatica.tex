@@ -1,46 +1,156 @@
-Descripción del proyecto realizado. Después de unos párrafos introductorios el capítulo se divide en subcapítulos. (de 25 a 35 páginas)
+Este capítulo recoge todos los aspectos informáticos de la aplicación. 
+\tutor{Sección “Guía de desarrollo” de la documentación de repositorio salvo el subcapítulo 4.4, que debe crearse nuevo} 
 
-\section{Requisitos}
+Comenzar indicando dónde se puede encontrar el repositorio con el código de la aplicación (enlace a GitHub) 
 
-Descripción detallada de las funcionalidades que tendría que implementar la aplicación (pues se asume que los requisitos se escriben antes de empezar el desarrollo). Pueden tener forma de historias de usuario o bien ser una lista de requisitos funcionales y no funcionales.
+Párrafo indicando la arquitectura de despliegue de la aplicación web. Habitualmente se especificará que se trata de una aplicación web con arquitectura SPA (y habrá que explicar en qué consiste) y las partes que tiene (cliente, servidor y base de datos). Si es una aplicación distribuida se hará una descripción de alto nivel de este aspecto. 
 
-Ejemplo:
-
-En esta sección abordaremos los requisitos planteados en la aplicación, tanto los iniciales como los que se han ido planteando a lo largo del desarrollo. 
-También se nombrarán otro tipo de requisitos a la hora de desarrollar el proyecto que no están relacionados en sí con el propio funcionamiento de la aplicación.
-
-\subsection{Requisitos Funcionales}
+Resumen de esta descripción en formato tabla/lista: 
 
 \begin{itemize}
-    \item RF1. Como usuario puedo ...
+    \item Tipo: web MVC, Web SPA, API REST, microservicios... 
+
+    \item Tecnologías: lenguajes, librerías, servicios adicionales. 
+
+    \item Herramientas: IDEs empleados y herramientas auxiliares. 
+
+    \item Control de calidad: Qué controles de calidad se aplican y qué tecnologías/herramientas se usan. 
+
+    \item Despliegue: Cómo se empaqueta, distribuye y despliega la aplicación (Docker, Kubernetes). Entorno de despliegue (si aplica en este TFG). 
+
+    \item Proceso de desarrollo: iterativa e incremental, git, DevOps (CI/CD). 
 \end{itemize}
 
-\subsection{Requisitos No Funcionales}
+Párrafo describiendo cada una de las secciones en las que se divide el capítulo (que se indican a continuación) 
+
+\section{Tecnologías}
+
+Tecnologías que usa la aplicación para su ejecución (no las herramientas usadas para su desarrollo).  
 
 \begin{itemize}
-    \item RNF1. La aplicación web debe ser fácil de usar ...
+    \item Sólo se profundizará si se consideran poco conocidas. Si no, serán de un párrafo. 
+
+    \item Si no es evidente se indicará para qué se usan en el proyecto. 
+
+    \item En todas se indicará la URL oficial. 
+
+    \item Extensión 2/3 páginas (salvo que haya alguna tecnología de partes optativas que necesite describirse en detalle). 
 \end{itemize}
+ 
 
-\section{Arquitectura y Análisis}
+\section{Herramientas}
 
-Descripción de los aspectos de alto nivel de la aplicación. Diagramas de clases de análisis, diagramas de clases de diseño, etc. Se debe incluir la suficiente información para que el lector pueda entender la estructura de alto nivel del software desarrollado. Se pueden incluir diagramas de casos de uso si se considera útil.
+IDEs empleados y herramientas auxiliares.  
 
-\section{Diseño e Implementación} 
-
-Descripción de algún aspecto relevante de la implementación que quiera mencionarse. Por ejemplo se podría incluir alguno de los siguientes aspectos:
 \begin{itemize}
-    \item Algoritmo complejo que se haya tenido que desarrollar.
-    \item Integración entre librerías problemática.
-    \item Resolución de algún bug que haya sido especialmente problemático.
-    \item Focalizar en alguna parte del desarrollo y describirla en más detalle
+    \item Sólo se profundizará si se consideran poco conocidas. Si no, serán de un párrafo. 
+
+    \item Si no es evidente se indicará para qué se usan en el proyecto. 
+
+    \item En todas se indicará la URL oficial. 
 \end{itemize}
 
-En esta sección se pueden incluir fragmentos de código fuente. En este apartado se pueden incluir algunas métricas del proyecto (Nº de clases, líneas de código, etc…). También se puede incluir la evolución del repositorio de github (gráfico de commits por día).
+Extensión 2/3 páginas. 
 
-\section{Pruebas} 
+\section{Arquitectura}
 
-En esta sección se describen las pruebas automáticas que han sido implementadas para el proyecto. Sobre los tests, conviene indicar la cobertura del código. Si no se han implementado pruebas automáticas, deberían haberse implementarse y describirse aquí o tener una buena justificación de por qué no se han implementado.
+\subsection{Despliegue}
 
-\section{Distribución y despliegue} 
+Arquitectura de despliegue (indicando procesos independientes y protocolos de comunicación) 
 
-En esta sección se hablará de cómo se ha empaquetado la aplicación en Docker, cómo se ha desplegado, etc.
+\subsection{Modelo del dominio} 
+
+Entidades persistentes de la aplicación, sus atributos y sus relaciones.  
+
+\subsection{API REST} 
+Se describirá en alto nivel la API REST como un listado de los recursos y sus operaciones (por ejemplo como el listado de operaciones tal y como aparecen en la documentación de OpenAPI). 
+
+\subsection{Arquitectura del servidor} 
+Diagrama de clases del servidor reflejando su separación por capas. Responsabilidades de cada capa (Controladores, servicios, repositorios...).
+
+\subsection{Arquitectura del cliente} 
+Diagrama de clases del cliente reflejando su separación por capas. Responsabilidades de cada capa (Componentes, servicios...).
+
+Extensión 5/6 páginas.
+
+\section{Implementación} 
+
+Aspectos relevantes de la implementación. 
+
+\tutor{Esta sección debe crearse nueva}
+ 
+Por ejemplo, se podría incluir alguno de los siguientes aspectos: 
+
+\begin{itemize}
+    \item Algoritmo complejo que se haya tenido que desarrollar. 
+
+    \item Integración entre librerías con la que hayan surgido problemas. 
+
+    \item Resolución de algún bug que haya sido especialmente problemático. 
+
+    \item Estudio que haya sido necesario para elegir una tecnología.  
+
+    \item Focalizar en alguna parte de la lógica de negocio que haya sido especialmente compleja y describirla en más detalle. 
+\end{itemize}
+
+En esta sección se pueden incluir fragmentos de código fuente. 
+
+Extensión (5/12 páginas). 
+
+
+\section{Control de calidad} 
+
+Descripción de los controles de calidad que se han realizado.  
+
+Descripción de las pruebas automáticas de cliente y servidor:  
+
+\begin{itemize}
+    \item Tipos de pruebas 
+
+    \item Descripción de qué funcionalidades se prueban. Ya que están numeradas en el anexo, conviene que haya algún tipo de trazabilidad entre la prueba y la funcionalidad. 
+
+    \item Estadísticas de las pruebas (número, cobertura, etc.). Mostrar captura de pantalla de su ejecución. 
+\end{itemize}
+
+Herramientas de análisis estático de código (si se ha usado): 
+
+\begin{itemize}
+    \item Captura de pantalla de los resultados de los análisis de código finales o a lo largo del tiempo. 
+    \item Métricas del tamaño del código (número de clases, número de líneas de código, separadas por tecnologías...) 
+\end{itemize}
+Extensión 3/4 páginas. 
+
+ 
+
+\section{Despliegue} 
+
+Cómo se realiza el empaquetado, distribución y despliegue
+
+\begin{itemize}
+    \item Empaquetado y distribución: una única imagen Docker para cliente y servidor, docker compose para coordinar, uso de Kubernetes, serverless...). Se indicará la URL para acceder al artefacto de la aplicación (DockerHub). 
+
+    \item Despliegue: Computación en la nube (AWS, Azure...), tecnología Infraestructura como código (Cloud Formation...). 
+\end{itemize}
+
+Extensión 2/3 páginas.  
+
+\section{Proceso de desarrollo} 
+
+Descripción de los aspectos técnicos del proceso de desarrollo (de las fases 2 a 5).
+ 
+Proceso iterativo e incremental, que sigue los principios del manifiesto ágil y se apoya en algunas de las buenas prácticas de Programación Extrema (XP) y Kanban. No se puede decir que se ha aplicado Scrum, porque no se aplica. 
+ 
+
+\subsection{Gestión de tareas} 
+GitHub Issues, GitHub Projects y gestión visual (tablero).
+
+\subsection{Git} 
+Se describe que se ha usado un repositorio git y la estrategia de ramas utilizada. Métricas de uso de git: Número de commits, número de ramas, etc.
+
+\subsection{Integración y entrega continua} 
+Se indican las tareas que realizan los flujos automáticos del sistema de integración continua (workflows de GitHub Actions).
+
+\subsection{Despliegue continuo y/o versionado} 
+Descripción del procedimiento de lanzamiento de versiones (releases), fechas en las que se ha publicado cada versión, descripción de alto nivel de las funcionalidades que incluye, etc. Si se ha usado Despliegue continuo, debería definirse aquí y cómo se relaciona con las versiones. Se debería mencionar el impacto en los usuarios cuando se produce el despliegue.
+
+Extensión 4/5 páginas. 
