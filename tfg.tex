@@ -215,18 +215,18 @@ Breves agradecimientos o dedicatoria.
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Apéndices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Anexos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \appendix
 
 \phantomsection
-\addcontentsline{toc}{chapter}{Apéndices}
+\addcontentsline{toc}{chapter}{Anexos}
 
 \mbox{}
 \vfill
 \begin{center}
 \begin{Huge}
-\textbf{Apéndices}
+\textbf{Anexos}
 \end{Huge}
 \end{center}
 \vfill
@@ -239,11 +239,22 @@ Breves agradecimientos o dedicatoria.
 \newpage
 
 
-% Primer apéndice
-\chapter{Este es el primer apéndice}
-\label{sec:apendice}
+% Primer anexo
+\chapter{Funcionalidades detalladas}
+\input{pages/appendixes/anexo-1.tex}
 
-\input{pages/appendixes/apendice-1.tex}
+% Segundo anexo
+\chapter{Instrucciones para ejecutar la aplicación}
+\input{pages/appendixes/anexo-2.tex}
+
+% Tercer anexo
+\chapter{Ejecución y edición de código}
+\input{pages/appendixes/anexo-3.tex}
+
+% Cuarto anexo
+\chapter{Documentación LaTeX}
+\tutor{Este anexo DEBE borrarse al terminar la memoria, solo contiene ejemplos de uso de LaTeX}
+\input{pages/appendixes/anexo-4.tex}
 
 % Fin del documento
 \end{document}
