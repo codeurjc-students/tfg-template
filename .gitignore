@@ -261,3 +261,4 @@ TSWLatexianTemp*
 tfg.pdf
 tfg.lol
 out/
+*.mtc*

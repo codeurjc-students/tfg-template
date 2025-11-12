@@ -15,5 +15,7 @@
         "*.lol": true,
         "*.lot": true,
         "*.toc": true,
+        "*.mtc*": true,
+        "*.maf": true
     }
 }

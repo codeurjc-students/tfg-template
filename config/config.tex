@@ -31,6 +31,7 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{setspace}
+\usepackage{minitoc}
 \usepackage{listings}
 \lstset{language=Java,
   showspaces=false,
@@ -121,6 +122,11 @@
 \def\listtablename{\'{I}ndice de tablas}
 }
 
+% Configuración de minitoc
+\mtcsetdepth{minitoc}{2}
+\mtcsettitle{minitoc}{Contenido del capítulo}
+\renewcommand{\mtifont}{\large\bf}
+\mtcsetfont{minitoc}{*}{\small}
 
 \floatname{algorithm}{Algoritmo}
 

@@ -80,6 +80,10 @@ Breves agradecimientos o dedicatoria.
 \renewcommand{\baselinestretch}{1}
 \renewcommand{\contentsname}{Índice de contenidos}
 
+% Inicializar minitoc
+\dominitoc
+\setcounter{minitocdepth}{2}
+\setlength{\mtcindent}{0pt}
 
 % Índice de contenidos
 \tableofcontents
@@ -89,11 +93,13 @@ Breves agradecimientos o dedicatoria.
 \listoftables
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\noindent \listtablename}
+\adjustmtc
 
 % Índice de figuras (OPCIONAL)
 \listoffigures
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\listfigurename}
+\adjustmtc
 
 % Índice de códigos/algoritmos (OPCIONAL).   El término "Códigos" se puede cambiar por "Métodos", "Funciones", "Algoritmos", etc.
 \renewcommand\lstlistlistingname{Códigos}
@@ -103,6 +109,7 @@ Breves agradecimientos o dedicatoria.
 \lstlistoflistings
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\lstlistlistingname}
+\adjustmtc
 
 
 % En este documento (de momento) no se ha considerado incluir un índice de algoritmos/pseudocódigos, como el que aparece en \ref{AdditionalLouvain}
@@ -179,6 +186,9 @@ Breves agradecimientos o dedicatoria.
 % Capítulo 4
 \chapter{Descripción Informática}
 \label{sec:descripcionInformatica}
+
+\minitoc
+\break
 
 \input{pages/descripcion-informatica.tex}
 
