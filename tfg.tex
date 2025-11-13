@@ -8,8 +8,8 @@
 \newcommand{\nombreautor}{Nombre Apellido1 Apellido2}
 \newcommand{\nombretutor}{NombreTutor Apellido1 Apellido2}
 \newcommand{\titulotrabajo}{Título del Trabajo de Fin de Grado}
-\newcommand{\grado}{Grado en XXXXXXXX}
-\newcommand{\curso}{Curso 20XX-20XX}
+\newcommand{\grado}{Grado en Ingeniería XXX}
+\newcommand{\curso}{Curso 202X-202Y}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           Inicio del documento                       
@@ -53,7 +53,7 @@ Breves agradecimientos o dedicatoria.
 
 \chapter*{Resumen}
 
-Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el contenido de la memoria. Esta página se escribe cuando ya se ha escrito toda la memoria.
+\input{pages/resumen.tex}
 
 \mbox{} \bigskip
 
@@ -80,6 +80,10 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 \renewcommand{\baselinestretch}{1}
 \renewcommand{\contentsname}{Índice de contenidos}
 
+% Inicializar minitoc
+\dominitoc
+\setcounter{minitocdepth}{2}
+\setlength{\mtcindent}{0pt}
 
 % Índice de contenidos
 \tableofcontents
@@ -89,11 +93,13 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 \listoftables
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\noindent \listtablename}
+\adjustmtc
 
 % Índice de figuras (OPCIONAL)
 \listoffigures
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\listfigurename}
+\adjustmtc
 
 % Índice de códigos/algoritmos (OPCIONAL).   El término "Códigos" se puede cambiar por "Métodos", "Funciones", "Algoritmos", etc.
 \renewcommand\lstlistlistingname{Códigos}
@@ -103,6 +109,7 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 \lstlistoflistings
 \afterpage{\blankpage}
 \addcontentsline{toc}{chapter}{\lstlistlistingname}
+\adjustmtc
 
 
 % En este documento (de momento) no se ha considerado incluir un índice de algoritmos/pseudocódigos, como el que aparece en \ref{AdditionalLouvain}
@@ -138,12 +145,6 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Capítulos de la memoria %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-% Capítulo 1
-\chapter{Introducción}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Estilo resto de páginas
@@ -161,29 +162,33 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Capítulo 1
+\chapter{Introducción y objetivos}
+
 \input{pages/introduccion.tex}
 
-% \afterpage{\blankpage} % puede generar problema en índice de contenidos
-% \newpage
-
+\blankpage
 
 % Capítulo 2
-\chapter{Objetivos}
+\chapter{Metodología}
 
-\input{pages/objetivos.tex}
+\input{pages/metodologia.tex}
 
 \blankpage
 
 % Capítulo 3
-\chapter{Tecnologías, Herramientas y Metodologías}
-\label{chap:tecnologias}
+\chapter{Descripción funcional}
 
-\input{pages/tecnologias-herramientas-metodologias.tex}
+\input{pages/descripcion-funcional.tex}
 
+\blankpage
 
 % Capítulo 4
 \chapter{Descripción Informática}
 \label{sec:descripcionInformatica}
+
+\minitoc
+\break
 
 \input{pages/descripcion-informatica.tex}
 
@@ -209,7 +214,7 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 \bibliography{bibliografia}
 }
 
-
+\normalsize
 
 % No expandir elementos para llenar toda la página
 \raggedbottom
@@ -220,18 +225,18 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Apéndices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Anexos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \appendix
 
 \phantomsection
-\addcontentsline{toc}{chapter}{Apéndices}
+\addcontentsline{toc}{chapter}{Anexos}
 
 \mbox{}
 \vfill
 \begin{center}
 \begin{Huge}
-\textbf{Apéndices}
+\textbf{Anexos}
 \end{Huge}
 \end{center}
 \vfill
@@ -244,11 +249,26 @@ Breve resumen del Trabajo de Fin de Grado (TFG). Una página resumiendo el conte
 \newpage
 
 
-% Primer apéndice
-\chapter{Este es el primer apéndice}
-\label{sec:apendice}
+% Primer anexo
+\chapter{Funcionalidades detalladas}
+\label{anexo:funcionalidades-detalladas}
+\input{pages/appendixes/anexo-1.tex}
 
-\input{pages/appendixes/apendice-1.tex}
+% Segundo anexo
+\chapter{Instrucciones para ejecutar la aplicación}
+\label{anexo:instrucciones-ejecutar-aplicacion}
+\input{pages/appendixes/anexo-2.tex}
+
+% Tercer anexo
+\chapter{Ejecución y edición de código}
+\label{anexo:ejecucion-edicion-codigo}
+\input{pages/appendixes/anexo-3.tex}
+
+% Cuarto anexo
+\chapter{Documentación LaTeX}
+\label{anexo:latex}
+\tutor{Este anexo DEBE borrarse al terminar la memoria, solo contiene ejemplos de uso de LaTeX}
+\input{pages/appendixes/anexo-4.tex}
 
 % Fin del documento
 \end{document}

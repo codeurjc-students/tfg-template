@@ -1,7 +1,9 @@
 \section{Ejemplo de funcionamiento de LaTeX}
 
 % Citar una referencia
-Esto es una referencia bibliográfica \cite{bibex}. Se recomienda leer ``The Not So Short Introduction to \LaTeX'' \cite{Oetiker2007} (existen versiones más modernas).
+Esto es una referencia bibliográfica \cite{bibex}. 
+
+Podemos definir una nota a pie de página.\footnote{Esta es una nota a pie de página de ejemplo.}
 
 \subsection{Tablas y figuras}
 
@@ -197,7 +199,7 @@ Normalmente no tendremos que insertar saltos de página, salvo para forzar que l
 \subsection{Código}
 
 
-\begin{mypython}[float={!t},caption={Titulo del algoritmo/código.},label={alg:etiqueta}]
+\begin{mypython}[caption={Titulo del algoritmo/código.},label={alg:etiqueta}]
 def sum_list_limits_1(a, lower, upper):
     if lower > upper:
         return 0

@@ -11,9 +11,24 @@
 
 
 \usepackage[spanish]{babel}
+\usepackage{iftex}
 
 %\usepackage[latin1]{inputenc} % Usad en WinEdt/MikTex
-\usepackage[utf8]{inputenc} % Usad en overleaf
+\ifPDFTeX
+  \usepackage[utf8]{inputenc} % Usad en overleaf
+  \newcommand{\codefont}{\ttfamily}
+\else
+  \usepackage{fontspec}
+  \IfFontExistsTF{Consolas}{
+    \newfontfamily\ConsolasFont{Consolas}
+  }{
+    \newfontfamily\ConsolasFont{Latin Modern Mono}
+  }
+  \newcommand{\codefont}{\ConsolasFont}
+\fi
+
+\newcommand{\jsonbasicfont}{\codefont\footnotesize}
+\newcommand{\codeboldfont}{\bfseries\codefont}
 
 %\usepackage[T1]{fontenc}
 
@@ -31,6 +46,7 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{setspace}
+\usepackage{minitoc}
 \usepackage{listings}
 \lstset{language=Java,
   showspaces=false,
@@ -43,7 +59,8 @@
   stringstyle=\color{pdarkblue},
   numbers=left,
   stepnumber=1,
-  basicstyle=\ttfamily\scriptsize,
+  basicstyle=\codefont\scriptsize,
+  captionpos=b,
   % For annotations
   % moredelim=**[s][\color{pblue}]{@}{\ },
   % For enums (manually)
@@ -120,6 +137,11 @@
 \def\listtablename{\'{I}ndice de tablas}
 }
 
+% Configuración de minitoc
+\mtcsetdepth{minitoc}{2}
+\mtcsettitle{minitoc}{Contenido del capítulo}
+\renewcommand{\mtifont}{\large\bf}
+\mtcsetfont{minitoc}{*}{\small}
 
 \floatname{algorithm}{Algoritmo}
 
@@ -128,6 +150,8 @@
 %% Etiquetas de comentarios (tutor/alumno)
 \newif\ifdraft
 \drafttrue
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
 \usepackage{subcaption}
 \input{config/macros}
 
@@ -150,25 +174,21 @@
 \definecolor{myteal}{rgb}{0.31,0.44,0.46}
 \definecolor{mymediumteal}{rgb}{0.41,0.58,0.60}
 
-\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
-\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
-
-
 %\newcommand*{\FormatDigit}[1]{\textcolor{mydeepteal}{#1}}
 \newcommand*{\FormatDigit}[1]{\textcolor{black}{#1}}
 
 % Python style for highlighting
 \newcommand\mypythonstyle{\lstset{
 language=Python,
-basicstyle=\ttfamily\small,
+basicstyle=\codefont\footnotesize,
 %basicstyle=\linespread{1.0}\footnotesize\ttm,
 otherkeywords={self},             % Add keywords here
-keywordstyle=\bfseries\ttfamily\color{myteal},
+keywordstyle=\codeboldfont\color{myteal},
 %keywordstyle=\ttb\color{myteal},
 commentstyle=\itshape\color{myteal},
 stringstyle=\color{mydeepteal},
 emph={MyClass,__init__},          % Custom highlighting
-emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
+emphstyle=\codeboldfont\color{mydeepteal},    % Custom highlighting style
 % Any extra options here
 showstringspaces=false,            %
 backgroundcolor=\color{bg},
@@ -189,6 +209,7 @@ framexrightmargin=0pt,
 fontadjust=true,
 basewidth=0.55em, % compactness of code
 upquote=true,
+captionpos=b,
 }}
 
 % Python environment
@@ -201,15 +222,15 @@ upquote=true,
 
 \newcommand\mypythonstylenormalinline{\lstset{
 language=Python,
-basicstyle=\ttfamily\normalsize,
+basicstyle=\codefont\normalsize,
 %basicstyle=\linespread{1.0}\footnotesize\ttm,
 otherkeywords={self},            % Add keywords here
-keywordstyle=\bfseries\ttfamily\color{myteal},
+keywordstyle=\codeboldfont\color{myteal},
 %keywordstyle=\ttb\color{myteal},
 commentstyle=\itshape\color{mymediumteal},
 stringstyle=\color{mydeepteal},
 emph={MyClass,__init__},          % Custom highlighting
-emphstyle=\ttb\color{mydeepteal},    % Custom highlighting style
+emphstyle=\codeboldfont\color{mydeepteal},    % Custom highlighting style
 % Any extra options here
 showstringspaces=false,            %
 backgroundcolor=\color{bg},
@@ -230,6 +251,7 @@ framexrightmargin=0pt,
 fontadjust=true,
 %basewidth=0.55em, % compactness of code
 upquote=true,
+captionpos=b,
 }}
 
 \newcommand\mypythoninline[1]{{\mypythonstylenormalinline\lstinline!#1!}}
