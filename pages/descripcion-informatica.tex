@@ -65,7 +65,34 @@ Arquitectura de despliegue (indicando procesos independientes y protocolos de co
 Entidades persistentes de la aplicación, sus atributos y sus relaciones.  
 
 \subsection{API REST} 
-Se describirá en alto nivel la API REST como un listado de los recursos y sus operaciones (por ejemplo como el listado de operaciones tal y como aparecen en la documentación de OpenAPI). 
+Se describirá en alto nivel la API REST como un listado de los recursos y sus operaciones. Para mantener la documentación clara se recomienda dedicar una subsección a cada recurso disponible, indicando:
+
+\begin{itemize}
+    \item Formato JSON del recurso (respuestas de consulta o detalles del recurso).
+    \item Operaciones disponibles (endpoints) agrupadas por método HTTP.
+\end{itemize}
+
+\subsubsection{Recurso Books}
+\begin{lstlisting}[basicstyle=\jsonbasicfont,frame=single,backgroundcolor=\color{white},rulecolor=\color{black},framerule=0.5pt,numbers=none]
+{
+  "id": 1,
+  "title": "Clean Architecture",
+  "author": "Robert C. Martin",
+  "isbn": "9780134494166"
+}
+\end{lstlisting}
+
+\textbf{Operaciones}
+\begin{itemize}
+    \item \textbf{GET /api/books/\{id\}} - Obtiene la información de un libro específico por su identificador.
+    \item \textbf{GET /api/books} - Obtiene el listado completo de libros.
+    \item \textbf{POST /api/books} - Crea un nuevo libro en el sistema.
+    \item \textbf{PUT /api/books/\{id\}} - Actualiza la información completa de un libro existente.
+    \item \textbf{PATCH /api/books/\{id\}} - Actualiza parcialmente la información de un libro existente.
+    \item \textbf{DELETE /api/books/\{id\}} - Elimina un libro del sistema.
+\end{itemize}
+
+\tutor{Los alumnos deben documentar todos los recursos de la API siguiendo este esquema. Si existen más recursos (usuarios, préstamos, pedidos, etc.), se repetirá la estructura para cada uno.}
 
 \subsection{Arquitectura del servidor} 
 Diagrama de clases del servidor reflejando su separación por capas. Responsabilidades de cada capa (Controladores, servicios, repositorios...).
