@@ -258,7 +258,7 @@ TSWLatexianTemp*
 # standalone packages
 *.sta
 
-tfg.pdf
+!tfg.pdf
 tfg.lol
 out/
 *.mtc*
