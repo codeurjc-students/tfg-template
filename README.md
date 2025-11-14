@@ -1,41 +1,36 @@
-# Plantilla para la memoria del TFG
+# Plantilla LaTeX para elaborar la memoria del Trabajo de Fin de Grado (de la ETSII URJC)
 
-En este repositorio se establece un formato de plantilla para memorias de Trabajos de Fin de Grado de con temática web dirigidos por los profesores Micael Gallego, Michel Maes, Óscar Soto e Iván Chicano.
+Este repositorio contiene una plantilla para que los alumnos puedan crear la memoria de su Trabajo de Fin de Grado (TFG) usando LaTeX. LaTeX es un sistema de composición de textos para crear documentos muy usado por los científicos para elaborar artículos de investigación y otros documentos.
 
-Es una versión revisada y extendida de la versión original creada por los profesores de la Universidad Rey Juan Carlos Manuel Rubio Sánchez y Clara Simón de Blas.
+Puedes ver el PDF resultante de la plantilla en el [repo de GitHub](https://github.com/codeurjc-students/tfg-template/blob/master/tfg.pdf) o [descargar el PDF](https://github.com/codeurjc-students/tfg-template/raw/refs/heads/master/tfg.pdf).
 
-## Trabajar con LaTeX
+Aunque esta plantilla puede usarse para crear cualquier tipo de TFG, tiene una estructura de capítulos y subcapítulos diseñada específicamente para los TFGs orientados a la implementación de una aplicación web.
 
-Esta plantilla utiliza LaTeX, un sistema de composición de textos para crear textos académicos estructurados. 
+El grupo docente de Aplicaciones Web y Calidad del Software de la Escuela Técnica Superior de Ingeniería Informática (ETSII) de la Universidad Rey Juan Carlos (URJC) tiene una guía detallada para realizar TFGs orientados a la implementación de una aplicación web. Al seguir los pasos definidos en esa guía se va elaborando gran parte de la memoria a medida que se realiza el trabajo.
 
-### Uso de LaTeX online
+Este grupo docente está formado por por Micael Gallego, Michel Maes, Óscar Soto e Iván Chicano.
 
-El alumno **deberá** utilizar la plataforma [Overleaf](https://www.overleaf.com/) (gratuita), que permite escribir documentos LaTeX online sin realizar ninguna instalación. El tutor creará un proyecto nuevo en Overleaf e importará este repositorio como plantilla.
+## ¿Cómo crear la memoria en LaTeX?
 
-### Uso de LaTeX local
+Para facilitar la revisión del tutor el alumno deberá editar la memoria usando el editor online [Overleaf](https://www.overleaf.com/) con una cuenta gratuita. No obstante, si por algún motivo se desea editar el documento en local, se proporcionan las instrucciones más abajo.
 
-En caso de querer trabajar de manera local, es necesario instalar LaTeX y un editor de texto adecuado.
+### Edición de la memoria online con Overleaf
 
-#### Instalación de LaTeX
+El tutor creará un proyecto nuevo en Overleaf que contendrá esta plantilla. Pasará la URL al alumno para que pueda comenzar con su edición.
 
-Para trabajar con LaTeX es necesario instalar una distribución de LaTeX (se recomienda [TeX Live](https://www.tug.org/texlive/))
+### Edición de la memoria en local
 
-* [Instalar en Linux](https://www.tug.org/texlive/quickinstall.html)
-* [Instalar en Windows](https://www.tug.org/texlive/windows.html)
-* [Instalar en MacOS](https://www.tug.org/mactex/)
+En caso de querer trabajar de manera local, es necesario instalar un editor con ayuda a la edición de LaTeX y el compilador de LaTeX.
 
-#### Instalación del IDE + Plugins
+#### Instalación del editor de Latex
 
-Para editar la memoria, se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de las siguientes extensiones: 
+Se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de la extensión [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop).
 
-* [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
-* [LaTeX language support](https://marketplace.visualstudio.com/items?itemName=torn4dom4n.latex-support)
+#### Instalación de Latex con Docker (recomendado)
 
-#### Instalación con Docker (opcional)
+1. Si no lo tienes ya instalado, instala [Docker](https://www.docker.com/).
 
-Haciendo uso de la extensión _LaTeX Workshop_ también es posible dockerizar todos los paquetes LaTeX para no tener que instalar nada en el sistema operativo local:
-
-1. Teniendo [Docker](https://www.docker.com/) instalado, descargamos una imagen que contenga los paquetes LaTeX:
+2. Descarga la siguiente imagen con Latex:
 
 ```
 $ docker pull tianon/latex
@@ -53,16 +48,28 @@ $ docker pull tianon/latex
 }
 ```
 
-Los archivos resultantes estarán situados en la carpeta `out/`
+Los archivos resultantes de la compilación se generarán en la carpeta `/out`
 
-## Diferencias respecto a la plantilla oficial
+#### Instalación nativa de LaTeX (no recomendado)
+
+La instalación nativa es menos portable y puede tener problemas de incompatibilidades con tu sistema. No obstante, lo puedes necesitar por eficiencia o por otros motivos.
+
+Aunque hay muchas distribuciones de LaTeX, se recomienda instalar [TexLive](https://www.tug.org/texlive/):
+
+* [Instalar en Linux](https://www.tug.org/texlive/quickinstall.html)
+* [Instalar en Windows](https://www.tug.org/texlive/windows.html)
+* [Instalar en MacOS](https://www.tug.org/mactex/)
+
+## Diferencias de esta plantilla respecto a la plantilla oficial de la ETSII
+
+Esta plantilla se ha creado partiendo de la versión original creada por los profesores de la Universidad Rey Juan Carlos Manuel Rubio Sánchez y Clara Simón de Blas.
 
 Respecto a la plantilla oficial, se han añadido nuevas funcionalidades, así como documentación y una nueva propuesta de estructura:
 
-* El documento _tfg.tex_ ahora referencia a distintas páginas de la carpeta _pages/_ para facilitar la navegación.
-* Se utiliza una estructura concreta para organizar el documento, orientada a trabajos con temática web.
-* Se oculta la configuración de la configuración del documento en un archivo aparte (_config.tex_) para facilitar su modificación y abstraer detalles técnicos.
-* Se añade una macro para comentar apropiadamente el PDF final, con el fin de que alumno y profesor puedan dejar retroalimentación de manera sencilla en cualquier sección.
+* El documento `tfg.tex` ahora referencia a distintas páginas de la carpeta `/pages` para facilitar la navegación por el documento (que tiene una extensión considerable).
+* Se utiliza una estructura del documento específica de los trabajos con temática web que han sido desarrollados con la metodología propuesta por los profesores Micael Gallego, Michel Maes, Óscar Soto e Iván Chicano.
+* Se ha movido la configuración del documento a un archivo aparte (`config.tex`) para facilitar su modificación y abstraer detalles técnicos.
+* Se añade una macro para que el profesor y el alumno puedan incluir comentarios que claramente se diferencian del contenido del documento.
 * Se han actualizado algunos paquetes LaTeX para ampliar las opciones de configuración:
   * `color` -> `xcolor`
 * Se añaden ejemplos avanzados de cómo incluir código fuente con resaltado de sintaxis usando el paquete `listings`.
