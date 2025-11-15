@@ -36,7 +36,7 @@ Se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de 
 $ docker pull tianon/latex
 ```
 
-2. Abrir el archivo _settings.json_ de VSCode (Ctrl + Shift + P > Preferences: Open Settings) y añadir las siguientes lineas:
+2. Abrir el archivo `settings.json` de VSCode (Ctrl + Shift + P > Preferences: Open User Settings (JSON)) y añadir las siguientes lineas:
 
 ```
 {
