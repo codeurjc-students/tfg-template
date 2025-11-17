@@ -26,29 +26,22 @@ En caso de querer trabajar de manera local, es necesario instalar un editor con 
 
 Se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de la extensión [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop).
 
-#### Instalación de Latex con Docker (recomendado)
-
-1. Si no lo tienes ya instalado, instala [Docker](https://www.docker.com/).
-
-2. Descarga la siguiente imagen con Latex:
-
+> TIP: Si quieres que los ficheros `.tex` tengan el world wrap activado por defecto cuando los abras, añade esta preferencia (F1 → Preferences: Open User Settings (JSON)):
 ```
-$ docker pull tianon/latex
-```
-
-2. Abrir el archivo _settings.json_ de VSCode (Ctrl + Shift + P > Preferences: Open Settings) y añadir las siguientes lineas:
-
-```
-{
-    "latex-workshop.docker.enabled": true,
-    "latex-workshop.latex.outDir": "./out",
-    "latex-workshop.synctex.afterBuild.enabled": true,
-    "latex-workshop.view.pdf.viewer": "tab",
-    "latex-workshop.docker.image.latex": "tianon/latex",
+"[latex]": {
+    "editor.wordWrap": "on"
 }
 ```
 
-Los archivos resultantes de la compilación se generarán en la carpeta `/out`
+#### Uso de Latex con Docker (recomendado)
+
+1. Instala [Docker](https://www.docker.com/).
+
+2. Instala la extensión VSCode [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+3. Abre este repositorio en VSCode
+
+4. Reabre el repositorio en un contenedor ejecutando `Execute Remote-Containers: Reopen in Container` en la paleta de comandos de VSCode. Ojo que este comando descargará la imagen `codeurjc/tfg-latex` que ocupa 4.78GB.
 
 #### Instalación nativa de LaTeX (no recomendado)
 

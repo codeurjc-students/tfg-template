@@ -1,0 +1,10 @@
+{
+    "name": "TeX Live base",
+    //"dockerFile": "Dockerfile", //Uncomment to rebuild the container from Dockerfile
+    "image": "codeurjc/tfg-latex",
+    "customizations": {
+        "vscode": {
+            "extensions": ["james-yu.latex-workshop"]
+        }
+    }
+}
