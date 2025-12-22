@@ -41,7 +41,7 @@ Se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de 
 
 3. Abre este repositorio en VSCode
 
-4. Reabre el repositorio en un contenedor ejecutando `Execute Remote-Containers: Reopen in Container` en la paleta de comandos de VSCode. Ojo que este comando descargará la imagen `codeurjc/tfg-latex` que ocupa 4.78GB.
+4. Reabre el repositorio en un contenedor ejecutando `Dev Containers: Reopen in Container` en la paleta de comandos de VSCode. Ojo que este comando descargará la imagen `codeurjc/tfg-latex` que ocupa 4.78GB.
 
 NOTA: Las operaciones git dentro del contenedor no funcionan correctamente. Está pendiente de solucionar estos problemas para que funcione bien:
    * Obtener las clases de git del host
