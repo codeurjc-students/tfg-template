@@ -1,0 +1,110 @@
+site_name: "Título del Trabajo de Fin de Grado"
+site_description: "Grado en Ingeniería XXX — Curso 202X-202Y"
+site_author: "Nombre Apellsido1 Apellido2"
+docs_dir: docs
+site_dir: site
+
+# ---- Tema ----------------------------------------------------------------
+theme:
+  name: material
+  language: es
+  logo: img/logoURJC.svg
+  favicon: img/logoURJC.svg
+  palette:
+    - scheme: default
+      primary: custom          # definido en extra.css con --md-primary-fg-color
+      accent: custom
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - toc.integrate
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - navigation.footer
+  custom_dir: overrides
+
+extra_css:
+  - extra.css
+
+hooks:
+  - hooks/fix_url_latex.py
+
+# ---- Plugins -------------------------------------------------------------
+plugins:
+  - search:
+      lang: es
+  - bibtex:
+      bib_file: "../bibliografia.bib"
+      bib_command: \cite
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: auto
+      height: auto
+      zoomable: true
+      draggable: true
+
+# ---- Extensiones Markdown ------------------------------------------------
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# ---- Navegación ----------------------------------------------------------
+# Generada automáticamente por convert.sh a partir de la estructura de tfg.tex.
+# Editarla manualmente solo si se quiere un orden o nombres distintos.
+
+extra:
+  tfg_year: 2025
+  tfg_institution: Universidad Rey Juan Carlos
+  tfg_school: Escuela Técnica Superior de Ingeniería Informática
+  tfg_tutor: NombreTutor Apellido1 Apellido2
+  tfg_degree: Grado en Ingeniería XXX
+  tfg_academic_year: Curso 202X-202Y
+
+nav:
+  - Inicio: index.md
+  - Agradecimientos: agradecimientos.md
+  - Capítulos:
+    - "Introducción y objetivos": introduccion.md
+    - "Metodología": metodologia.md
+    - "Descripción funcional": descripcion-funcional.md
+    - "Descripción Informática": descripcion-informatica.md
+    - "Conclusiones y trabajos futuros": conclusiones.md
+  - Anexos:
+    - "Funcionalidades detalladas": appendixes/anexo-1.md
+    - "Instrucciones para ejecutar la aplicación": appendixes/anexo-2.md
+    - "Ejecución y edición de código": appendixes/anexo-3.md
+    - "Documentación LaTeX": appendixes/anexo-4.md

@@ -1,0 +1,69 @@
+Tras el detallado recorrido por la especificación, diseño, implementación y validación de la aplicación ``LogArt: Galería de Recuerdos'' expuesto en los capítulos anteriores, este capítulo final tiene como propósito consolidar las principales conclusiones extraídas del desarrollo de este Trabajo de Fin de Grado. Se realizará una evaluación del cumplimiento de los objetivos inicialmente planteados, se reflexionará sobre los desafíos encontrados y los aprendizajes adquiridos durante el proceso, y se presentará una visión sobre las posibles líneas de evolución y trabajos futuros que podrían enriquecer y expandir la funcionalidad de LogArt.
+
+Este capítulo busca, por tanto, no solo resumir los resultados del proyecto, sino también ofrecer una perspectiva personal sobre la experiencia de desarrollo y el potencial de la aplicación creada.
+
+\section{Conclusiones del Proyecto}
+\label{sec:conclusionesProyecto}
+
+El desarrollo de ``LogArt: Galería de Recuerdos'' ha culminado en una aplicación web funcional que satisface la necesidad principal de proporcionar a los usuarios una plataforma personal para documentar y organizar sus experiencias y recuerdos relacionados con diversas disciplinas culturales. A continuación, se evalúa el proyecto en función de sus objetivos, los resultados obtenidos y los desafíos enfrentados.
+
+\subsection{Cumplimiento de Objetivos}
+\label{ssec:cumplimientoObjetivos}
+
+El proyecto se planteó como una serie de objetivos tanto generales como específicos, detallados en el Capítulo \ref{chap:objetivos}. Se puede concluir que estos objetivos han sido alcanzados satisfactoriamente:
+\begin{itemize}
+    \item \textbf{Objetivo Principal:} Se ha diseñado, desarrollado e implementado con éxito LogArt, una aplicación web SPA funcional que permite a los usuarios registrar, organizar y consultar sus recuerdos culturales. La aplicación ofrece las herramientas necesarias para gestionar galerías personales de libros, canciones y videojuegos, y detallar experiencias mediante comentarios.
+    \item \textbf{Objetivos Específicos:}
+    \begin{itemize}
+        \item \textbf{Análisis y Definición de Requisitos (OE1):} Se llevó a cabo un análisis de las funcionalidades necesarias, resultando en la especificación detallada de requisitos presentada en el Capítulo \ref{chap:descripcionInformatica}.
+        \item \textbf{Diseño de la Arquitectura (OE2):} Se diseño e implementó una arquitectura basada en el stack MERN (MongoDB, Express.js, React y Node.js), que demostró ser adecuada para los requisitos del proyecto, permitiendo un desarrollo fullstack JavaScript coherente.
+        \item \textbf{Desarrollo del Backend (OE3):} Se construyó una API RESTful robusta con Express.js y Node.js, gestionando la lógica de negocio y la persistencia de datos en MongoDB mediante Mongoose.
+        \item \textbf{Desarrollo del Frontend (OE4):} Se desarrolló una interfaz de usuario interactiva y responsiva como una Single Page Application (SPA) utilizando React, facilitando una experiencia de usuario fluida.
+        \item \textbf{Implementación de Funcionalidades Clave (OE5):} Se implementaron todas las funcionalidades esenciales definidas, incluyendo la gestión completa de usuarios (registro, login, perfiles), el ciclo CRUD para objetos y comentarios, la categorización por disciplinas, y funcionalidades avanzadas como la compartición de objetos, sistema de favoritos, notificaciones en tiempo real, y un panel de administración con estadísticas y herramientas de moderación.
+        \item \textbf{Pruebas y Validación (OE6):} Se estableció una estrategia de pruebas automáticas que incluye pruebas de integración para el backend (Jest y Supertest) y pruebas End-To-End para el frontend (Playwright), contribuyendo significativamente a la calidad y estabilidad de la aplicación.
+        \item \textbf{Contenerización y Despliegue (OE7):} La aplicación fue completamente contenerizada utilizando Docker y Docker Compose, simplificando su configuración y ejecución. Además, se implementó un pipeline de Integración Continua y Entrega Continua (CI/CD) con Github Actions para automatizar las pruebas y la publicación de imágenes Docker en DockerHub.
+        \item \textbf{Elaboración de la Documentación (OE8):} Se ha completado la presente memoria de Trabajo de Fin de Grado, documentando exhaustivamente el proceso de desarrollo, las decisiones tomadas y los resultados obtenidos.
+    \end{itemize}
+\end{itemize}
+
+En resumen, la aplicación LogArt desarrollada cumple con el conjunto de objetivos, funcionalidades y características técnicas que se propusieron como metas del proyecto.
+
+\subsection{Resultados Obtenidos}
+\label{ssec:resultadosObtenidos}
+
+El principal resultado de este TFG es la aplicación web LogArt, una plataforma operativa que ofrece una solución viable y útil para aquellos usuarios que deseen llevar un registro personal y detallado de su consumo cultural.
+
+\subsection{Desafíos Enfrentados y Soluciones}
+\label{ssec:desafiosSoluciones}
+
+Durante el desarrollo de LogArt, se presentaron diversos desafíos técnicos y de aprendizaje, cuya superación fue clave para el éxito del proyecto:
+\begin{itemize}
+    \item \textbf{Adopción y Dominio del Stack MERN Completo:} Si bien se tenían conocimientos previos de algunas tecnologías, la integración y el dominio profundo de todo el stack MERN (especialmente la interacción eficiente entre React, Node.js/Express.js y MongoDB con Mongoose) supuso una curva de aprendizaje continua. Se abordó mediante estudio autodidacta, consulta de documentación oficial y experimentación práctica. Por este mismo motivo, y por ser el primer proyecto en el stack MERN realizado por el tutor, el código puede no ser lo más óptimo posible.
+    \item \textbf{Diseño de una API RESTful Coherente y Segura:} Definir una API que fuera a la vez intuitiva, segura (con autenticación JWT y autorización por roles) y que cubriera todas las necesidades funcionales requirió un diseño iterativo y cuidadoso.
+    \item \textbf{Implementación del Panel de Administración:} El desarrollo del dashboard de administrador, con sus diversas estadísticas y agregaciones de datos, representó un desafío significativo en términos de lógica de backend y presentación de datos en el frontend. Se superó mediante la descomposición del problema en consultas más pequeñas y la construcción incremental de la interfaz.
+    \item \textbf{Configuración de CI/CD y Dockerización Completa:} Asegurar que la aplicación se construyera correctamente en contenedores Docker y que los pipelines de CI/CD funcionaran de manera fiable para las pruebas y la publicación de imágenes implicó un aprendizaje considerable sobre Docker, Docker Compose y GitHub Actions, especialmente en la gestión de dependencias y entornos.
+\end{itemize}
+La resolución de estos desafíos fue fundamental no solo para el proyecto en sí, sino también para el desarrollo de habilidades de resolución de problemas y la consolidación de conocimientos técnicos.
+
+\subsection{Limitaciones del Proyecto y Trabajos Futuros}
+\label{ssec:limitacionesproyecto}
+
+A pesar de los logros alcanzados, es importante reconocer algunas limitaciones del proyecto LogArt en su estado actual, que podrían abordarse en futuras iteraciones:
+\begin{itemize}
+    \item \textbf{Cobertura de Pruebas:}
+    Aunque se implementó una base sólida de pruebas, la cobertura de código (aproximadamente 70\%, Sección \ref{sec:pruebasCap4}) podría incrementarse, para aumentar más la robustez del sistema.
+    \item \textbf{Almacenamiento de Imágenes:} Actualmente, las imágenes subidas por los usuarios se almacenan en el sistema de ficheros del servidor donde se ejecuta la aplicación. Para una mayor escalabilidad, resiliencia y eficiencia en un entorno de producción, sería preferible integrar un servicio de almacenamiento en la nube (Amazon S3 o Google Cloud Storage).
+    \item \textbf{Despliegue en Producción:} Si bien la aplicación está completamente dockerizada y lista para ser desplegada, este TFG no ha incluido la puesta en producción en un servidor público o plataforma en la nube.
+\end{itemize}
+Estas limitaciones no demeritan el trabajo realizado, sino que motivan y ofrecen un punto de partida claro para futuras mejoras y desarrollos.
+
+\section{Reflexión Personal y Aprendizaje}
+\label{sec:reflexionPersonal}
+
+La realización del Trabajo Fin de Grado ``LogArt: Galería de Recuerdos" ha constituido una experiencia de aprendizaje sumamente valiosa y enriquecedora, tanto a nivel técnico como personal. Este proyecto ha representado la culminación de los conocimientos adquiridos durante el Grado en Ingeniería del Software y una oportunidad para aplicarlos en un desarrollo completo y autónomo.
+
+Desde el punto de vista \textbf{técnico}, el TFG ha permitido profundizar y consolidar habilidades en un espectro amplio de tecnologías modernas para el desarrollo web FullStack. Destaca el aprendizaje práctico y la aplicación del stack MERN (MongoDB, Express.js, React, Node.js), la implementación de arquitecturas RESTful, y la interacción con bases de datos NoSQL. Igualmente significativo ha sido el dominio de herramientas y prácticas DevOps, como la contenerización con Docker y Docker Compose, la configuración de pipelines de Integración Continua y Entrega Continua (CI/CD) con GitHub Actions, y la implementación de una estrategia de pruebas automáticas multinivel (unitaria, integración y E2E).
+
+A nivel \textbf{personal y profesional}, el proyecto ha fomentado el desarrollo de habilidades cruciales como la planificación y gestión autónoma de un proyecto de software de principio a fin, la toma de decisiones fundamentadas, la resolución de problemas complejos bajo plazos definidos, y la capacidad de crear documentación técnica. Además, la necesidad de investigar, aprender y superar obstáculos de forma independiente, ha reforzado la proactividad y la resiliencia del autor.
+
+En definitiva, el desarrollo de LogArt ha sido un desafío, que no solo ha resultado en una aplicación funcional, sino que también ha servido como un excelente campo de pruebas para solidificar mi formación como futuro Ingeniero del Software.

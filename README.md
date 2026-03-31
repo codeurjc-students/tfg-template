@@ -57,6 +57,14 @@ Aunque hay muchas distribuciones de LaTeX, se recomienda instalar [TexLive](http
 * [Instalar en Windows](https://www.tug.org/texlive/windows.html)
 * [Instalar en MacOS](https://www.tug.org/mactex/)
 
+## Generación de una página web partiendo de la memoria
+
+Se proporciona una herramienta para generar un sitio web con el contenido de la memoria. 
+
+Esta página web permite una lectura mucho más adecuada en dispositivos digitales que el PDF (ajuste de tamaño de letra, se evita la separación de páginas, mejor salto entre referencias, etc.)
+
+[Instrucciones para generar la web](WEB.md)
+
 ## Diferencias de esta plantilla respecto a la plantilla oficial de la ETSII
 
 Esta plantilla se ha creado partiendo de la versión original creada por los profesores de la Universidad Rey Juan Carlos Manuel Rubio Sánchez y Clara Simón de Blas.

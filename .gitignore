@@ -261,4 +261,11 @@ TSWLatexianTemp*
 !tfg.pdf
 tfg.lol
 out/
+
+# Ficheros generados por el sistema de web (./scripts/build.sh)
+web/docs/
+web/site/
+web/.venv/
+web/.labels.json
 *.mtc*
+__pycache__/
