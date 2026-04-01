@@ -6,5 +6,17 @@
         "vscode": {
             "extensions": ["james-yu.latex-workshop"]
         }
-    }
+    },
+    // Indica a VS Code que use este usuario para la terminal y procesos
+    "remoteUser": "vscode", 
+    
+    // Esta opción ajusta el UID del contenedor Al intenta
+    // para que coincida con el del usuario que abre VS Code.
+    "updateRemoteUserUID": true,
+    
+    // Opcional: asegura que el workspace tenga los permisos correctos al montar
+    "workspaceFolder": "/workspace",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ]
 }
