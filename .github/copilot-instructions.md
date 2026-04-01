@@ -20,7 +20,7 @@ config/               # LaTeX configuration, logos, macros
 bibliografia.bib      # BibTeX bibliography
 
 tex2site/
-  build_site.sh       # End-to-end build (one command: ./tex2site/build_site.sh)
+  tex2site.sh         # End-to-end build (one command: ./tex2site/tex2site.sh)
   tex2md/      # Phase 2 modules
     convert.py        # Phase 2 entry point: LaTeX → standard Markdown
     metadata.py       # Extracts title, author, tutor from tfg.tex
@@ -30,10 +30,9 @@ tex2site/
     process_md.py  # Post-processes .md: links, image paths, tables,
                              #   figure captions, fenced-div removal
   md2mkdocs/           # Phase 3 modules
-    md2mkdocs.py     # Reads .metadata.json, writes metadata + nav
-                      #   into web/mkdocs.yml
+    md2mkdocs.py     # Writes metadata + nav into web/mkdocs.yml
   filters/            # Pandoc Lua filters
-    collect_labels.lua   # Pass 1: collects \label{} into .labels.json
+    collect_labels.lua   # Pass 1: collects \label{} for cross-reference resolution
     resolve_refs.lua     # Pass 2: replaces \ref{} with MD links
     cleanup.lua          # Removes non-web LaTeX environments
 
@@ -53,10 +52,13 @@ web/
 
 ```bash
 # Full build (LaTeX → MD → HTML)
-./tex2site/build_site.sh
+./tex2site/tex2site.sh
 
 # Full build + local dev server (auto-reload)
-./tex2site/build_site.sh --serve
+./tex2site/tex2site.sh serve
+
+# Custom output paths
+./tex2site/tex2site.sh build --tex /path/to/thesis --mkdocs /path/to/mkdocs --site /path/to/site
 
 # Only conversion step (no MkDocs build)
 python3 tex2site/tex2md/tex2md.py
@@ -67,7 +69,7 @@ python3 tex2site/tex2md/process_md.py
 
 The build script runs three phases:
 1. **Tooling setup** — verifies system deps (`pandoc ≥ 3.0`, `pdf2svg`, `gs`, `python3`), creates `web/.venv/`, installs `web/requirements.txt`
-2. **Convert** — runs `tex2site/tex2md/tex2md.py` (metadata → structure → images → Pandoc passes → Markdown post-processing → saves `web/docs/.metadata.json`)
+2. **Convert** — runs `tex2site/tex2md/tex2md.py` (metadata → structure → images → Pandoc passes → Markdown post-processing)
 3. **Generate site** — runs `md2mkdocs/md2mkdocs.py` (configures `web/mkdocs.yml`), then `mkdocs build`
 
 ---
@@ -78,7 +80,7 @@ The build script runs three phases:
 
 | Pass | Input | Filter | Output |
 |------|-------|--------|--------|
-| 1 (collect) | `tfg.tex` (full doc) | `collect_labels.lua` | `web/docs/.labels.json` |
+| 1 (collect) | `tfg.tex` (full doc) | `collect_labels.lua` | *(temporary label map)* |
 | 2 (convert) | each `pages/*.tex` | `cleanup.lua` + `resolve_refs.lua` | `web/docs/*.md` |
 
 The `CHAPTER_MAP` env var (`"0:index,1:introduccion,..."`) is passed to Lua filters so they know which chapter maps to which output file.
@@ -147,4 +149,4 @@ Runs on every generated `web/docs/*.md` after Pandoc. Key transformations:
 2. Write content in `pages/*.tex` and `pages/appendixes/*.tex`
 3. Add images to `img/`
 4. Update `bibliografia.bib`
-5. Run `./tex2site/build_site.sh` — the entire website regenerates automatically
+5. Run `./tex2site/tex2site.sh` — the entire website regenerates automatically

@@ -150,20 +150,22 @@ def main() -> None:
         bib_file=bib_file,
         labels_json=labels_json,
     )
+    labels_json.unlink(missing_ok=True)
+    _info(f"  removed intermediate {labels_json.name}")
 
     # Step 8: Post-process generated Markdown to standard format
-    postprocess_script = SCRIPT_DIR / "process_md.py"
-    if postprocess_script.exists():
-        try:
-            _info("Post-processing Markdown...")
-            subprocess.run(
-                [sys.executable, str(postprocess_script), "--docs", str(docs_dir)],
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            _info(f"Markdown post-processing failed (non-fatal): {e}")
-    else:
-        _info("process_md.py not found — skipping Markdown post-processing")
+    # Step 8: Post-process generated Markdown to standard format.
+    # Import and call process_md directly (rather than via subprocess) so that
+    # the current in-memory module code is always used, avoiding stale .pyc
+    # bytecode that a subprocess might pick up.
+    try:
+        _info("Post-processing Markdown...")
+        from tex2md import process_md as _process_md
+        md_files = list(docs_dir.rglob('*.md'))
+        for f in md_files:
+            _process_md.process_file(f, docs_dir)
+    except Exception as e:
+        _info(f"Markdown post-processing failed (non-fatal): {e}")
 
     # Step 9: Save metadata + structure for the site-generation phase
     _info(f"Saving metadata to {metadata_json.name}...")

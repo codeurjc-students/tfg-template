@@ -88,6 +88,33 @@ def fix_text(s: str, img_prefix: str) -> str:
 
     s = re.sub(r'!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)\{([^}]*)\}', _img_to_figure, s)
 
+    # HTML src="/img/..." attributes (from raw HTML figure blocks emitted by
+    # Pandoc for multi-subfigure environments) → depth-correct relative paths.
+    # This runs AFTER _img_to_figure so it only affects the HTML that came
+    # directly from Pandoc (where _postprocess set the paths to /img/…) and
+    # does NOT double-rewrite the already-relative paths produced above.
+    s = re.sub(r'src="/img/([^"]+)"', rf'src="{img_prefix}img/\1"', s)
+
+    # Pandoc wraps inline math inside raw HTML blocks (e.g. <figcaption>,
+    # <td>) in <span class="math inline">\(…\)</span>.  MkDocs Material's CSS
+    # may apply display:block styling to elements with class "math", turning
+    # each variable into a block-level element and breaking the text flow.
+    # Stripping the span wrapper leaves only the \(…\) delimiter content,
+    # which MathJax finds and renders inline via its configured inlineMath
+    # delimiters — so math still renders correctly without the CSS conflict.
+    s = re.sub(
+        r'<span class="math inline">(\\\(.*?\\\))</span>',
+        r'\1',
+        s,
+        flags=re.DOTALL,
+    )
+    s = re.sub(
+        r'<span class="math display">(\\\[.*?\\\])</span>',
+        r'\1',
+        s,
+        flags=re.DOTALL,
+    )
+
     return s
 
 
@@ -389,7 +416,8 @@ def convert_pandoc_simple_tables(s: str) -> str:
         if (i + 1 < n
                 and '  ' in lines[i]
                 and re.search(r'^\s*-{3,}[\s-]*$', lines[i + 1])):
-            header = lines[i].strip()
+            header_line = lines[i]
+            sep_line    = lines[i + 1]
             j = i + 2
             rows = []
             caption = None
@@ -405,25 +433,48 @@ def convert_pandoc_simple_tables(s: str) -> str:
                     j += 1
                     break
                 if '  ' in lj:
-                    rows.append(lj.strip())
+                    rows.append(lj)
                     j += 1
                     continue
                 break
 
             if rows:
-                def split_cols(line):
-                    return [c.strip() for c in re.split(r'\s{2,}', line)]
+                # Build column position ranges from the separator line.
+                # Each dash-group defines one column; the column spans from its
+                # first dash to just before the next dash-group (or end of line).
+                # Using fixed positions (rather than splitting by whitespace) lets
+                # us correctly extract empty leading/trailing cells.
+                col_spans = []
+                si = 0
+                sl = sep_line.rstrip()
+                while si < len(sl):
+                    if sl[si] == '-':
+                        start = si
+                        while si < len(sl) and sl[si] == '-':
+                            si += 1
+                        col_spans.append(start)
+                    else:
+                        si += 1
+                # Derive end of each column as the start of the next minus the gap
+                col_ends = col_spans[1:] + [None]
+
+                def slice_cell(line, start, end):
+                    cell = (line[start:end] if end is not None else line[start:])
+                    return cell.strip()
+
+                def cells_from_line(line):
+                    return [slice_cell(line, s, e) for s, e in zip(col_spans, col_ends)]
 
                 def escape_pipe(text):
                     return text.replace('|', '\\|')
 
-                headers = split_cols(header)
+                headers = cells_from_line(header_line)
                 pipe_table = [
                     '| ' + ' | '.join(escape_pipe(h) for h in headers) + ' |',
                     '| ' + ' | '.join('---' for _ in headers) + ' |',
                 ]
                 for r in rows:
-                    cols = split_cols(r)
+                    cols = cells_from_line(r)
                     while len(cols) < len(headers):
                         cols.append('')
                     pipe_table.append('| ' + ' | '.join(escape_pipe(c) for c in cols) + ' |')
@@ -437,35 +488,172 @@ def convert_pandoc_simple_tables(s: str) -> str:
         i += 1
     return '\n'.join(out) + ('\n' if s.endswith('\n') else '')
 
-def fix_lstlisting_captions(s: str) -> str:
-    """Convert lstlisting optional-argument lines into <figure>/<figcaption> HTML.
+def fix_pandoc_table_captions(s: str) -> str:
+    """Convert Pandoc's '  : Caption' table captions to styled HTML.
 
-    When Pandoc processes \\begin{lstlisting}[caption={...}, label={...}], it
-    treats lstlisting as a verbatim environment and includes the optional-
-    argument line as the first line of the resulting indented code block.
-    This function detects that pattern, extracts caption and label, removes
-    the argument line, and wraps the code in <figure>/<figcaption>.
+    Pandoc emits \\caption text as a bare '  : Caption text' line after the
+    pipe table. Python-Markdown's table extension does not support captions,
+    so this line renders as literal text '': Caption text''. We replace it
+    with a <p class="table-caption"> so that extra.css can centre and style
+    it consistently with <figcaption> used by HTML tables.
     """
-    _opt_re = re.compile(r'^    \[.*?caption=\{([^}]+)\}.*?\]\s*$')
-    _lbl_re = re.compile(r'label=\{([^}]+)\}')
+    # Match a Pandoc table caption line: optional leading spaces, then ': '
+    # followed by text, immediately after one or more pipe-table rows.
+    # We only act when the preceding non-blank line is a table row (starts '|')
+    # to avoid replacing unrelated ':' paragraphs.
     lines = s.splitlines(keepends=True)
     out = []
     i = 0
     n = len(lines)
     while i < n:
-        m = _opt_re.match(lines[i])
-        if m:
-            caption = m.group(1).strip()
-            lm = _lbl_re.search(lines[i])
+        line = lines[i]
+        # Detect Pandoc caption line: leading spaces, then ': ' + text
+        stripped = line.lstrip()
+        if stripped.startswith(': ') and not stripped.startswith(':: '):
+            # Find the previous non-blank line
+            prev = None
+            for k in range(len(out) - 1, -1, -1):
+                if out[k].strip():
+                    prev = out[k]
+                    break
+            if prev is not None and prev.lstrip().startswith('|'):
+                caption_text = stripped[2:].rstrip('\n\r')
+                out.append(f'<p class="table-caption">{caption_text}</p>\n')
+                i += 1
+                continue
+        out.append(line)
+        i += 1
+    return ''.join(out)
+
+
+def fix_code_captions(s: str) -> str:
+    """Convert captioned code blocks to <figure>/<figcaption> HTML.
+
+    Handles three formats that Pandoc emits for lstlisting blocks:
+
+    1. **4-space indented block** (Pandoc's indented code block output):
+
+           [caption={Caption text}, label={label}]
+               code line 1
+               code line 2
+
+    2. **Backtick fenced block** with caption= attribute:
+
+           ``` {#label caption="Caption text" label="label"}
+           code line 1
+           code line 2
+           ```
+
+    3. **Backtick fenced block** with .pseudocode-js class (algorithm blocks):
+
+           ``` {#alg:label .pseudocode-js language="pseudocode-js" ...}
+           \\begin{algorithm}
+           ...
+           \\end{algorithm}
+           ```
+
+    Formats 1 and 2 → <figure id="label"><pre><code>…</code></pre><figcaption>…</figcaption></figure>
+    Format 3         → <pre id="alg:label" class="pseudocode">…</pre>  (rendered by pseudocode.js)
+    """
+    # Pattern 1: 4-space indented argument line
+    _indent_opt_re = re.compile(r'^    \[.*?caption=\{([^}]+)\}.*?\]\s*$')
+    _indent_lbl_re = re.compile(r'label=\{([^}]+)\}')
+    # Pattern 2: backtick fenced opening with caption= attribute
+    _fence_open_re = re.compile(r'^(`{3,})\s*\{([^}]*caption[^}]*)\}\s*\n?$')
+    _fence_cap_re  = re.compile(r'caption="([^"]*)"')
+    _fence_id_re   = re.compile(r'#([\w:.\-]+)')
+    # Pattern 3: backtick fenced opening with .pseudocode-js class
+    _pseudo_open_re = re.compile(r'^(`{3,})\s*\{([^}]*\.pseudocode-js[^}]*)\}\s*\n?$')
+    # Pattern 4: backtick fenced opening with .htmltable class
+    _htmltable_open_re = re.compile(r'^(`{3,})\s*\{([^}]*\.htmltable[^}]*)\}\s*\n?$')
+
+    def _emit(caption: str, label: str, code_lines: list) -> str:
+        while code_lines and code_lines[-1].strip() == '':
+            code_lines.pop()
+        code = ''.join(code_lines).rstrip('\n')
+        code_esc = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        id_attr = f' id="{label}"' if label else ''
+        return (
+            f'<figure{id_attr}>\n'
+            f'<pre><code>{code_esc}</code></pre>\n'
+            f'<figcaption>{caption}</figcaption>\n'
+            f'</figure>\n'
+        )
+
+    def _emit_pseudocode(label: str, code_lines: list) -> str:
+        while code_lines and code_lines[-1].strip() == '':
+            code_lines.pop()
+        code = ''.join(code_lines).rstrip('\n')
+        code_esc = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+        id_attr = f' id="{label}"' if label else ''
+        return f'<pre{id_attr} class="pseudocode">\n{code_esc}\n</pre>\n'
+
+    lines = s.splitlines(keepends=True)
+    out = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        # --- Pattern 4: htmltable fenced block (check before all others) ---
+        m4 = _htmltable_open_re.match(lines[i])
+        if m4:
+            fence = m4.group(1)
+            attrs = m4.group(2)
+            id_m = _fence_id_re.search(attrs)
+            label = id_m.group(1) if id_m else ''
+            cap_m = _fence_cap_re.search(attrs)
+            caption = cap_m.group(1) if cap_m else ''
+            j = i + 1
+            html_lines = []
+            while j < n:
+                if lines[j].rstrip('\n\r') == fence:
+                    j += 1
+                    break
+                html_lines.append(lines[j])
+                j += 1
+            html_content = ''.join(html_lines).strip()
+            id_attr = f' id="{label}"' if label else ''
+            if caption:
+                out.append(
+                    f'<figure{id_attr}>\n{html_content}\n'
+                    f'<figcaption>{caption}</figcaption>\n</figure>\n'
+                )
+            else:
+                wrap = f'<div{id_attr}>' if id_attr else '<div>'
+                out.append(f'{wrap}\n{html_content}\n</div>\n')
+            i = j
+            continue
+
+        # --- Pattern 3: pseudocode-js fenced block (check before Pattern 2) ---
+        m3 = _pseudo_open_re.match(lines[i])
+        if m3:
+            fence = m3.group(1)
+            attrs = m3.group(2)
+            id_m = _fence_id_re.search(attrs)
+            label = id_m.group(1) if id_m else ''
+            j = i + 1
+            code_lines = []
+            while j < n:
+                if lines[j].rstrip('\n\r') == fence:
+                    j += 1
+                    break
+                code_lines.append(lines[j])
+                j += 1
+            out.append(_emit_pseudocode(label, code_lines))
+            i = j
+            continue
+
+        # --- Pattern 1: indented argument line followed by indented code ---
+        m1 = _indent_opt_re.match(lines[i])
+        if m1:
+            caption = m1.group(1).strip()
+            lm = _indent_lbl_re.search(lines[i])
             label = lm.group(1).strip() if lm else ''
-            # Accumulate code-block lines (4-space indented), including blank
-            # lines that appear inside the block (e.g. between method bodies).
             j = i + 1
             code_lines = []
             while j < n:
                 nxt = lines[j]
                 if nxt.startswith('    '):
-                    code_lines.append(nxt)
+                    code_lines.append(nxt[4:])  # dedent
                     j += 1
                 elif nxt.strip() == '':
                     # include blank line only if more indented lines follow
@@ -479,29 +667,34 @@ def fix_lstlisting_captions(s: str) -> str:
                         break
                 else:
                     break
-            # Strip trailing blank lines
-            while code_lines and code_lines[-1].strip() == '':
-                code_lines.pop()
-            # Dedent 4 spaces (the code-block indent) from every line
-            code = ''.join(
-                l[4:] if l.startswith('    ') else l
-                for l in code_lines
-            ).rstrip('\n')
-            # Escape HTML special chars in the code text
-            code_esc = (code.replace('&', '&amp;')
-                            .replace('<', '&lt;')
-                            .replace('>', '&gt;'))
-            id_attr = f' id="{label}"' if label else ''
-            out.append(
-                f'<figure{id_attr}>\n'
-                f'<pre><code>{code_esc}</code></pre>\n'
-                f'<figcaption>{caption}</figcaption>\n'
-                f'</figure>\n'
-            )
+            out.append(_emit(caption, label, code_lines))
             i = j
-        else:
-            out.append(lines[i])
-            i += 1
+            continue
+
+        # --- Pattern 2: backtick fence with caption= attribute ---
+        m2 = _fence_open_re.match(lines[i])
+        if m2:
+            fence = m2.group(1)
+            attrs = m2.group(2)
+            cap_m = _fence_cap_re.search(attrs)
+            if cap_m:
+                caption = cap_m.group(1)
+                id_m = _fence_id_re.search(attrs)
+                label = id_m.group(1) if id_m else ''
+                j = i + 1
+                code_lines = []
+                while j < n:
+                    if lines[j].rstrip('\n\r') == fence:
+                        j += 1
+                        break
+                    code_lines.append(lines[j])
+                    j += 1
+                out.append(_emit(caption, label, code_lines))
+                i = j
+                continue
+
+        out.append(lines[i])
+        i += 1
     return ''.join(out)
 
 
@@ -554,20 +747,21 @@ def strip_multicols_html(s: str) -> str:
 
 
 def convert_headerless_two_col_tables_to_list(s: str) -> str:
-    """Flatten headerless two-column Pandoc simple tables into Markdown lists.
+    """Convert headerless Pandoc simple tables to Markdown lists or pipe tables.
 
-    Pandoc renders LaTeX tabularx/tabular tables with no header row as
-    simple tables with leading/trailing dash-separator lines and 2-space
-    indentation. These tables are typically used in LaTeX to distribute
-    bullet-point items in two columns to save vertical space. On the web,
-    the compact column layout is unnecessary and the table format is not
-    parsed by MkDocs. We flatten them into a plain Markdown unordered list
-    so the content is readable and correctly rendered.
+    Pandoc renders LaTeX tabular tables with no header row as simple tables
+    with leading/trailing dash-separator lines and 2-space indentation.  On
+    the web these are not parsed by MkDocs.
+
+    Tables with 1–2 distinct columns are flattened to a Markdown unordered
+    list (their typical use is distributing keywords over two compact columns).
+    Tables with 3+ columns are converted to a headerless pipe table so the
+    data structure is preserved.
 
     Detected pattern (all lines indented by 2 spaces)::
 
         (blank line)
-          ---...  ---...     <- opening separator
+          ---...  ---...     <- opening separator (NO preceding space-indented line)
           item1   item2      <- data row(s)
           item3              <- data row with single item
           ---...  ---...     <- closing separator
@@ -581,6 +775,21 @@ def convert_headerless_two_col_tables_to_list(s: str) -> str:
     while i < n:
         line = lines[i]
         if _sep_re.match(line):
+            # Guard: if the immediately preceding non-blank line is ALSO
+            # space-indented (i.e. starts with 2+ spaces) and is not itself a
+            # separator, then it is the header row of a *headed* Pandoc simple
+            # table.  Skip this separator and let convert_pandoc_simple_tables()
+            # handle the full block including the header.
+            prev_content = None
+            for k in range(i - 1, -1, -1):
+                if lines[k].strip():
+                    prev_content = lines[k]
+                    break
+            if prev_content and not _sep_re.match(prev_content) and prev_content.startswith('  '):
+                out.append(line)
+                i += 1
+                continue
+
             # Collect data rows until a matching closing separator is found.
             j = i + 1
             rows = []
@@ -593,18 +802,61 @@ def convert_headerless_two_col_tables_to_list(s: str) -> str:
                     break
                 rows.append(lj)
                 j += 1
+
+            # Capture optional ': Caption' line immediately after the close
+            caption = None
+            if found_close and j < n:
+                cap_line = lines[j]
+                if cap_line.lstrip().startswith(':') and not cap_line.lstrip().startswith('::'):
+                    caption = cap_line.lstrip().lstrip(':').strip()
+                    j += 1  # consume the caption line
+
             if found_close and rows:
-                items = []
+                # Parse each row into columns (split on 2+ spaces)
+                parsed = []
                 for row in rows:
                     row_s = row.strip()
                     if not row_s:
                         continue
-                    # Split the two (or more) columns by two-or-more spaces.
                     cols = [c.strip() for c in re.split(r'\s{2,}', row_s)]
-                    items.extend(c for c in cols if c)
-                if items:
-                    out.extend(f'- {item}' for item in items)
+                    parsed.append(cols)
+
+                # Determine the maximum number of columns
+                max_cols = max((len(r) for r in parsed), default=0)
+
+                if max_cols <= 2:
+                    # Simple keyword / two-column layout → flatten to list
+                    items = []
+                    for cols in parsed:
+                        items.extend(c for c in cols if c)
+                    if items:
+                        out.extend(f'- {item}' for item in items)
+                        out.append('')
+                        if caption:
+                            out.append(f': {caption}')
+                            out.append('')
+                        i = j
+                        continue
+                else:
+                    # Multi-column data table → emit as a headerless pipe table.
+                    def _esc(t: str) -> str:
+                        return t.replace('|', '\\|')
+
+                    pipe_lines = []
+                    # Emit a blank header row so Python-Markdown recognises the
+                    # pipe table (it requires a header separator line).
+                    header_cells = [''] * max_cols
+                    pipe_lines.append('| ' + ' | '.join(header_cells) + ' |')
+                    pipe_lines.append('| ' + ' | '.join('---' for _ in header_cells) + ' |')
+                    for cols in parsed:
+                        while len(cols) < max_cols:
+                            cols.append('')
+                        pipe_lines.append('| ' + ' | '.join(_esc(c) for c in cols) + ' |')
+                    out.extend(pipe_lines)
                     out.append('')
+                    if caption:
+                        out.append(f': {caption}')
+                        out.append('')
                     i = j
                     continue
         out.append(line)
@@ -639,7 +891,7 @@ def process_file(p: Path, docs: Path):
     rel = p.relative_to(docs)
     depth = len(rel.parent.parts)  # 0 for top-level files
     prefix = "../" * (depth + 1)
-    new = fix_lstlisting_captions(text)
+    new = fix_code_captions(text)
     new = fix_text(new, prefix)
     new = fix_markdown_widths(new)
     new = strip_pandoc_divs(new)
@@ -648,6 +900,7 @@ def process_file(p: Path, docs: Path):
     new = convert_headerless_two_col_tables_to_list(new)
     new = convert_pandoc_pipe_grid_tables(new)
     new = convert_pandoc_simple_tables(new)
+    new = fix_pandoc_table_captions(new)
     new = fix_bold_in_html_cells(new)
     if new != text:
         p.write_text(new, encoding='utf-8')

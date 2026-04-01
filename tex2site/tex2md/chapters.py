@@ -34,6 +34,371 @@ def _warn(msg: str) -> None:
 # LaTeX pre-processing
 # ---------------------------------------------------------------------------
 
+
+def _strip_latex_caption(s: str) -> str:
+    """Convert a LaTeX caption string to plain text.
+
+    Strips formatting commands (\\textit, \\textbf, …), removes math-mode
+    delimiters while keeping their content, and strips remaining backslash
+    commands so the result is usable as a plain-text label in lstlisting
+    options.
+    """
+    # Strip font commands keeping their argument text (up to 4 levels deep)
+    for _ in range(4):
+        s = re.sub(
+            r'\\(?:textit|textbf|text|emph|texttt|textrm|mathrm|mathbf)\{([^{}]*)\}',
+            r'\1', s,
+        )
+    # LaTeX typographic quotes
+    s = s.replace('``', '\u201c').replace("''", '\u201d')
+    # Remove math-mode delimiters $...$ keeping the math content
+    s = re.sub(r'\$([^$]*)\$', r'\1', s)
+    # Remove \left, \right (spacing commands without their own arguments)
+    s = re.sub(r'\\(?:left|right)\s*', '', s)
+    # Strip \cmd{...} keeping argument content
+    s = re.sub(r'\\[a-zA-Z]+\{([^{}]*)\}', r'\1', s)
+    # Remove remaining \cmd (no braces argument)
+    s = re.sub(r'\\[a-zA-Z]+\s*', '', s)
+    # Remove any leftover bare braces
+    s = s.replace('{', '').replace('}', '')
+    # Backslash-space → plain space
+    s = s.replace('\\ ', ' ')
+    # Normalise whitespace
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+
+# ---------------------------------------------------------------------------
+# LaTeX tabular helpers (multirow/multicolumn → HTML)
+# ---------------------------------------------------------------------------
+
+def _split_tabular_rows(body: str) -> list:
+    """Split a tabular body into rows by \\\\ at brace depth 0."""
+    rows, current, depth, i = [], [], 0, 0
+    while i < len(body):
+        c = body[i]
+        if c == '{':
+            depth += 1; current.append(c)
+        elif c == '}':
+            depth -= 1; current.append(c)
+        elif c == '\\' and i + 1 < len(body) and body[i + 1] == '\\' and depth == 0:
+            rows.append(''.join(current))
+            current = []
+            i += 2
+            continue
+        else:
+            current.append(c)
+        i += 1
+    tail = ''.join(current).strip()
+    if tail:
+        rows.append(tail)
+    return rows
+
+
+def _split_tabular_cells(row: str) -> list:
+    """Split a row into cells by & at brace depth 0."""
+    cells, current, depth = [], [], 0
+    for c in row:
+        if c == '{':
+            depth += 1; current.append(c)
+        elif c == '}':
+            depth -= 1; current.append(c)
+        elif c == '&' and depth == 0:
+            cells.append(''.join(current))
+            current = []
+        else:
+            current.append(c)
+    cells.append(''.join(current))
+    return cells
+
+
+def _parse_tabular_cell(cell_tex: str) -> dict:
+    """Parse a cell, extracting multirow/multicolumn span info and content."""
+    cell_tex = cell_tex.strip()
+    result = {'content': cell_tex, 'rowspan': 1, 'colspan': 1}
+    # \multicolumn{n}{align}{content}
+    mc_m = re.match(r'\\multicolumn\{(\d+)\}\{[^}]+\}\{(.*)\}$', cell_tex, re.DOTALL)
+    if mc_m:
+        result['colspan'] = int(mc_m.group(1))
+        cell_tex = mc_m.group(2).strip()
+        result['content'] = cell_tex
+    # \multirow{n}{width}{content} (may be nested inside multicolumn)
+    mr_m = re.match(r'\\multirow\{(\d+)\}\{[^}]*\}\{(.*)\}$', cell_tex, re.DOTALL)
+    if mr_m:
+        result['rowspan'] = int(mr_m.group(1))
+        result['content'] = mr_m.group(2).strip()
+    return result
+
+
+def _tex_cell_to_html(tex: str) -> str:
+    """Convert LaTeX tabular cell content to HTML inline text."""
+    tex = tex.strip()
+    # Extract \verb|...| first using placeholders so that the subsequent
+    # bare-command stripping (\\[a-zA-Z]+) does not eat backslashes inside
+    # verbatim content (e.g. \verb|'\n'| → <code>'\n'</code> not <code>''</code>).
+    _verb_placeholders: dict = {}
+    _verb_counter = [0]
+    def _verb_sub(m: re.Match) -> str:
+        key = f'\x00VERB{_verb_counter[0]}\x00'
+        _verb_counter[0] += 1
+        content = (m.group(2)
+            .replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
+        _verb_placeholders[key] = f'<code>{content}</code>'
+        return key
+    tex = re.sub(r'\verb([^a-zA-Z\s])(.*?)\1', _verb_sub, tex)
+    # Protect $...$ math expressions with placeholders so that \alpha etc.
+    # inside math are not eaten by the bare-command stripping step below.
+    # The $...$ delimiters are preserved verbatim — MathJax will render them.
+    _math_placeholders: dict = {}
+    _math_counter = [0]
+    def _math_sub(m: re.Match) -> str:
+        key = f'\x00MATH{_math_counter[0]}\x00'
+        _math_counter[0] += 1
+        _math_placeholders[key] = m.group(0)
+        return key
+    tex = re.sub(r'\$[^$]*\$', _math_sub, tex)
+    tex = re.sub(r'\\textbf\{([^{}]*)\}', r'<strong>\1</strong>', tex)
+    tex = re.sub(r'\\(?:textit|emph)\{([^{}]*)\}', r'<em>\1</em>', tex)
+    tex = re.sub(r'\\texttt\{([^{}]*)\}', r'<code>\1</code>', tex)
+    # LaTeX typographic shortcuts
+    tex = tex.replace("``", '\u201c').replace("''", '\u201d')
+    tex = tex.replace('\\&', '&amp;').replace('\\%', '%').replace('\\$', '$')
+    # Strip remaining \cmd{...} keeping argument, then bare \cmd
+    tex = re.sub(r'\\[a-zA-Z]+\{([^{}]*)\}', r'\1', tex)
+    tex = re.sub(r'\\[a-zA-Z]+\s*', '', tex)
+    tex = tex.replace('{', '').replace('}', '')
+    # Restore \verb placeholders
+    for key, val in _verb_placeholders.items():
+        tex = tex.replace(key, val)
+    # Restore $...$ math placeholders
+    for key, val in _math_placeholders.items():
+        tex = tex.replace(key, val)
+    return tex.strip()
+
+
+def _convert_tabular_to_html(tabular_body: str, col_spec: str) -> str:
+    """Convert a LaTeX tabular body to an HTML <table> with rowspan/colspan."""
+    num_cols = len(re.findall(r'[lrcp]', col_spec))
+    # Strip LaTeX line comments (%...) before splitting rows so that
+    # inline comments after \\ don't bleed into the next row's cell content.
+    tabular_body = re.sub(r'(?<!\\)%[^\n]*', '', tabular_body)
+    raw_rows = _split_tabular_rows(tabular_body)
+
+    parsed_rows = []
+    for row_tex in raw_rows:
+        row_tex = re.sub(r'\\hline', '', row_tex)
+        row_tex = re.sub(r'\\cline\{[^}]+\}', '', row_tex)
+        row_tex = row_tex.strip()
+        if not row_tex:
+            continue
+        cells_tex = _split_tabular_cells(row_tex)
+        cells, col_pos = [], 1
+        for ct in cells_tex:
+            pc = _parse_tabular_cell(ct)
+            pc['col_pos'] = col_pos
+            cells.append(pc)
+            col_pos += pc['colspan']
+        parsed_rows.append(cells)
+
+    # row_span_remaining[c] = rows still "occupied" in column c (1-indexed)
+    row_span_remaining = [0] * (num_cols + 2)
+    html_rows = []
+
+    for cells in parsed_rows:
+        cell_by_col = {c['col_pos']: c for c in cells}
+        html_cells = []
+        col_idx = 1
+        while col_idx <= num_cols:
+            if row_span_remaining[col_idx] > 0:
+                row_span_remaining[col_idx] -= 1
+                col_idx += 1
+                continue
+            if col_idx not in cell_by_col:
+                col_idx += 1
+                continue
+            cell = cell_by_col[col_idx]
+            rowspan, colspan = cell['rowspan'], cell['colspan']
+            content = _tex_cell_to_html(cell['content'])
+            for c in range(col_idx, col_idx + colspan):
+                if c <= num_cols:
+                    row_span_remaining[c] = rowspan - 1
+            attrs = ''
+            if rowspan > 1:
+                attrs += f' rowspan="{rowspan}"'
+            if colspan > 1:
+                attrs += f' colspan="{colspan}"'
+            html_cells.append(f'<td{attrs}>{content}</td>')
+            col_idx += colspan
+        if html_cells:
+            html_rows.append('<tr>' + ''.join(html_cells) + '</tr>')
+
+    return '<table>\n' + '\n'.join(html_rows) + '\n</table>'
+
+
+def _preprocess_tex(tex: str) -> str:
+    r"""Apply LaTeX-level transformations before passing to Pandoc.
+
+    Transformations:
+    1. Strip \\cline{N-M} — Pandoc does not understand partial horizontal
+       rules and includes the "N-M" argument text as spurious cell content
+       in the generated Markdown table.
+    2. Replace \\begin{mypython} / \\end{mypython} with lstlisting — the
+       mypython environment is a custom lstnewenvironment alias defined in
+       config.tex.  Pandoc does not know about it and emits a raw Div;
+       replacing it with lstlisting lets Pandoc convert it to an indented
+       code block that fix_code_captions() can then wrap in
+       <figure>/<figcaption>.
+    3. Convert \\begin{algorithm}…\\end{algorithm} to lstlisting with
+       language={pseudocode-js} — preserves the original algorithmic LaTeX
+       (\\STATE, \\FOR, \\IF, etc.) verbatim inside a lstlisting block so
+       that Pandoc passes the content unchanged, and fix_code_captions()
+       then emits a <pre class="pseudocode"> block for rendering by
+       pseudocode.js in the browser.
+    """
+    # 1. Strip \cline{N-M} partial horizontal rules.
+    tex = re.sub(r'\\cline\{[^}]+\}', '', tex)
+
+    # 2. Replace mypython with lstlisting.
+    tex = re.sub(r'\\begin\{mypython\}', r'\\begin{lstlisting}', tex)
+    tex = tex.replace(r'\end{mypython}', r'\end{lstlisting}')
+
+    # 2b. Normalise lstlisting options: strip leading whitespace after '[' so
+    # that '\begin{lstlisting}[ caption=...]' becomes '\begin{lstlisting}[caption=...]'.
+    # Without this, Pandoc fails to parse the attributes and emits an indented
+    # code block with no identifier, causing collect_labels.lua to miss the label
+    # and all \ref{} to it to render as unresolved references.
+    tex = re.sub(r'(\\begin\{lstlisting\})\[\s+', r'\1[', tex)
+
+    # 3. Convert algorithm environments to lstlisting with language={pseudocode-js}.
+    # The original algorithmic LaTeX is preserved verbatim inside the lstlisting
+    # so Pandoc passes it through unchanged.  fix_code_captions() then converts
+    # the resulting fenced code block into <pre class="pseudocode"> for rendering
+    # by pseudocode.js in the browser.
+    def _convert_algorithm(m: re.Match) -> str:
+        body = m.group(1)
+
+        # Extract label for the lstlisting options (used as the HTML id).
+        lab_m = re.search(r'\\label\{([^}]+)\}', body)
+        label = lab_m.group(1).strip() if lab_m else ''
+
+        # Strip \label{...} from the body — pseudocode.js does not recognise it
+        # and throws a parse error (leaving the source <pre> as display:none).
+        # The id is already carried by the lstlisting label= option, which
+        # fix_code_captions() maps to the id attribute on the <pre> element.
+        body = re.sub(r'\\label\{[^}]+\}', '', body)
+
+        # Strip the optional [N] argument from \begin{algorithmic}[N] — this is
+        # a LaTeX line-numbering step option unknown to pseudocode.js.
+        # Line numbering is enabled globally via lineNumber:true in pseudocode_init.js.
+        body = re.sub(r'(\\begin\{algorithmic\})\[\d+\]', r'\1', body)
+
+        # Replace \ (backslash-space) with a plain space.
+        # In LaTeX text mode (e.g. after a $...$ expression) \ is a spacing
+        # command that pseudocode.js does not recognise and throws
+        # "Unrecognizable atom".  In math mode KaTeX ignores whitespace, so
+        # the replacement is harmless there too.
+        body = body.replace('\\ ', ' ')
+
+        # pseudocode.js requires \caption to appear BEFORE \begin{algorithmic}.
+        # In typical LaTeX, \caption is placed after \end{algorithmic}, so move it.
+        algo_start_m = re.search(r'\\begin\{algorithmic\}', body)
+        if not algo_start_m:
+            return m.group(0)  # leave unchanged if structure not recognised
+
+        cap_m = re.search(r'\\caption\{((?:[^{}]|\{[^{}]*\})*)\}', body)
+        if cap_m and cap_m.start() > algo_start_m.start():
+            caption_str = cap_m.group(0)
+            body = body[:cap_m.start()] + body[cap_m.end():]
+            new_algo_m = re.search(r'\\begin\{algorithmic\}', body)
+            if new_algo_m:
+                body = (
+                    body[:new_algo_m.start()]
+                    + caption_str + '\n'
+                    + body[new_algo_m.start():]
+                )
+
+        opts_parts = ['language={pseudocode-js}']
+        if label:
+            opts_parts.append(f'label={{{label}}}')
+        # Add a plain-text caption so collect_labels.lua can use it as the
+        # display text for \ref{} cross-references instead of the generic
+        # counter ("código N.M").
+        if cap_m:
+            raw_cap = cap_m.group(1)
+            # If the caption opens with an italic phrase (\textit{...}), use
+            # only that phrase as the display text — algorithm captions
+            # commonly include "input" / "output" metadata after the title,
+            # e.g. \caption{\textit{My Algo} \textbf{input}=... \textbf{output}=...}.
+            # Using only the italic title gives a clean reference label.
+            italic_m = re.match(r'\s*\\textit\{([^{}]*)\}', raw_cap)
+            if italic_m:
+                plain_cap = italic_m.group(1).strip()
+            else:
+                plain_cap = _strip_latex_caption(raw_cap)
+            if plain_cap:
+                opts_parts.append(f'caption={{{plain_cap}}}')
+        opts = '[' + ', '.join(opts_parts) + ']'
+
+        content = body.strip()
+        return (
+            f'\\begin{{lstlisting}}{opts}\n'
+            f'\\begin{{algorithm}}\n{content}\n\\end{{algorithm}}\n'
+            f'\\end{{lstlisting}}'
+        )
+
+    tex = re.sub(
+        r'\\begin\{algorithm\}(.*?)\\end\{algorithm\}',
+        _convert_algorithm,
+        tex,
+        flags=re.DOTALL,
+    )
+
+    # 4. Convert LaTeX tables that use \multirow / \multicolumn to HTML tables
+    # wrapped in lstlisting[language={htmltable}].  Plain tables (no spanning
+    # cells) are left untouched and let Pandoc convert them to Markdown pipe
+    # tables.  Pandoc passes the lstlisting content verbatim to the Markdown
+    # output; fix_code_captions() (Pattern 4) then unwraps it as a raw
+    # <figure>/<table> block.
+    def _convert_table_to_htmlblock(m: re.Match) -> str:
+        body = m.group(1)
+        if not re.search(r'\\multirow|\\multicolumn', body):
+            return m.group(0)  # plain table — let Pandoc handle it
+        cap_m = re.search(r'\\caption\{((?:[^{}]|\{[^{}]*\})*)\}', body)
+        lab_m = re.search(r'\\label\{([^}]+)\}', body)
+        caption_raw = cap_m.group(1) if cap_m else ''
+        label = lab_m.group(1).strip() if lab_m else ''
+        caption_plain = _strip_latex_caption(caption_raw)
+        tab_m = re.search(
+            r'\\begin\{tabular\}\{([^}]+)\}(.*?)\\end\{tabular\}',
+            body, re.DOTALL,
+        )
+        if not tab_m:
+            return m.group(0)
+        html_table = _convert_tabular_to_html(tab_m.group(2), tab_m.group(1))
+        opts_parts = ['language={htmltable}']
+        if caption_plain:
+            opts_parts.append(f'caption={{{caption_plain}}}')
+        if label:
+            opts_parts.append(f'label={{{label}}}')
+        opts = '[' + ', '.join(opts_parts) + ']'
+        return f'\\begin{{lstlisting}}{opts}\n{html_table}\n\\end{{lstlisting}}'
+
+    tex = re.sub(
+        r'\\begin\{table\}(.*?)\\end\{table\}',
+        _convert_table_to_htmlblock,
+        tex,
+        flags=re.DOTALL,
+    )
+    tex = re.sub(
+        r'\\begin\{sidewaystable\}(.*?)\\end\{sidewaystable\}',
+        _convert_table_to_htmlblock,
+        tex,
+        flags=re.DOTALL,
+    )
+
+    return tex
+
+
 def _split_minipage_figures(tex: str) -> str:
     """Split \\begin{figure} environments that use \\begin{minipage} for
     side-by-side images into separate \\begin{figure} environments, one
@@ -122,7 +487,14 @@ def _split_minipage_figures(tex: str) -> str:
                     'img_opts': img_opts,
                 })
 
-        if len(minipages) >= 2:
+        # Only split when at least one minipage has its own \label so that
+        # cross-references to individual subfigures can be resolved.  When
+        # no minipage has a label the outer \caption and any extra images
+        # outside the minipages (e.g. a third sub-figure (c)) would be
+        # silently discarded by the splitting logic.  In that case, Pandoc
+        # processes the full figure and emits a proper <figure>/<figcaption>
+        # HTML block with all images and the combined caption intact.
+        if len(minipages) >= 2 and any(mp['label'] for mp in minipages):
             result.append(tex[cursor : fm.start()])
             for mp in minipages:
                 lines = [
@@ -161,6 +533,20 @@ _IMG_SUBS = [
     # Relative img/ references → /img/
     (re.compile(r'\]\(\.\./img/'), r'](/img/'),
     (re.compile(r'\]\(img/'), r'](/img/'),
+    # LaTeX \logoUniversidad macro → resolved URJC logo SVG path.
+    # Pandoc does not expand cross-file \newcommand definitions so
+    # \logoUniversidad passes through verbatim as the image path.  We
+    # intercept it here and point it at the logo SVG produced by images.py.
+    (re.compile(r'\]\(\\logoUniversidad\)'), r'](/img/logoURJC.svg)'),
+    # HTML <embed> elements emitted by Pandoc for PDF/EPS images inside raw
+    # HTML <figure> blocks (e.g. multi-subfigure environments that were NOT
+    # split by _split_minipage_figures).  These rules run BEFORE the plain
+    # src="img/" → src="/img/" substitution below so that the patterns still
+    # match the original relative paths in the Pandoc HTML output.
+    # The \3 back-reference preserves any style="…" or other attributes.
+    (re.compile(r'<embed\s+src="img/([^"]+)\.(pdf|eps)"([^/]*)/>'), r'<img src="/img/\1.svg"\3/>'),
+    (re.compile(r'<embed\s+src="\.\./img/([^"]+)\.(pdf|eps)"([^/]*)/>'), r'<img src="/img/\1.svg"\3/>'),
+    (re.compile(r'<embed\s+src="config/logos/([^"]+)\.(pdf|eps)"([^/]*)/>'), r'<img src="/img/\1.svg"\3/>'),
     # Raw HTML src= attributes
     (re.compile(r'src="\.\./img/'), r'src="/img/'),
     (re.compile(r'src="img/'), r'src="/img/'),
@@ -247,9 +633,10 @@ def collect_labels(
                 content = chapter_tex.read_text(encoding="utf-8")
             except OSError:
                 continue
-            preprocessed = _split_minipage_figures(content)
+            preprocessed = _preprocess_tex(content)
+            preprocessed = _split_minipage_figures(preprocessed)
             if preprocessed == content:
-                continue  # no minipages to fix in this chapter
+                continue  # no changes needed for this chapter
 
             tmp_path = chapter_tex.with_suffix("._pp.tex")
             tmp_path.write_text(preprocessed, encoding="utf-8")
@@ -331,10 +718,11 @@ def _run_pandoc_chapter(
         "CURRENT_DOC_FILE": current_doc_file,
     }
 
-    # Pre-process: split minipage multi-figure constructs so every subfigure
-    # gets its own caption and anchor in the output.
+    # Pre-process: apply LaTeX-level fixes then split minipage multi-figure
+    # constructs so every subfigure gets its own caption and anchor.
     original_content = tex_in.read_text(encoding="utf-8")
-    preprocessed = _split_minipage_figures(original_content)
+    preprocessed = _preprocess_tex(original_content)
+    preprocessed = _split_minipage_figures(preprocessed)
     if preprocessed != original_content:
         # Write the preprocessed content to a sibling temp file so that
         # relative \includegraphics paths stay valid (Pandoc resolves them
@@ -422,9 +810,17 @@ def convert_chapter(
     bib_file: Path,
     labels_json: Path,
     repo_root: Path,
+    docs_dir: Path | None = None,
 ) -> None:
     """Convert a single chapter from LaTeX to Markdown."""
-    out_file = md_out.name  # filename only, for CURRENT_DOC_FILE
+    # CURRENT_DOC_FILE must match the path stored by collect_labels.lua in
+    # .labels.json (e.g. "appendixes/anexo-4.md" for appendix files).  Using
+    # md_out.name alone would give just "anexo-4.md", causing the same-page
+    # anchor check in resolve_refs.lua to fail for every appendix label.
+    if docs_dir is not None:
+        out_file = str(md_out.relative_to(docs_dir))
+    else:
+        out_file = md_out.name  # fallback: filename only
     _info(f"  {tex_in} → {md_out.relative_to(md_out.parents[1])}")
 
     md_body = _run_pandoc_chapter(
@@ -545,7 +941,7 @@ def convert_all_chapters(
         tex_in = repo_root / chap.tex_file
         md_out = docs_dir / (Path(chap.tex_file).stem + ".md")
         convert_chapter(tex_in, md_out, chap.title, m["author"],
-                        filters_dir, bib_file, labels_json, repo_root)
+                        filters_dir, bib_file, labels_json, repo_root, docs_dir)
 
     # ---- Appendixes ---------------------------------------------------
     (docs_dir / "appendixes").mkdir(parents=True, exist_ok=True)
@@ -553,4 +949,4 @@ def convert_all_chapters(
         tex_in = repo_root / app.tex_file
         md_out = docs_dir / "appendixes" / (Path(app.tex_file).stem + ".md")
         convert_chapter(tex_in, md_out, app.title, m["author"],
-                        filters_dir, bib_file, labels_json, repo_root)
+                        filters_dir, bib_file, labels_json, repo_root, docs_dir)

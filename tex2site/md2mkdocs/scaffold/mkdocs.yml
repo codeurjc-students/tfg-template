@@ -31,6 +31,8 @@ theme:
 
 extra_css:
   - extra.css
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css
+  - https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.css
 
 hooks:
   - hooks/fix_url_latex.py
@@ -81,6 +83,9 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.js
+  - javascripts/pseudocode_init.js
 
 # ---- Navegación ----------------------------------------------------------
 # Generada automáticamente por convert.sh a partir de la estructura de tfg.tex.

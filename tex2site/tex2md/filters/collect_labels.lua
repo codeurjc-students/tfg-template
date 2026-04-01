@@ -290,12 +290,16 @@ function CodeBlock(el)
   if label and label ~= "" then
     counters.listing = counters.listing + 1
     local num = counters.chapter .. "." .. counters.listing
+    -- Pandoc copies the caption= option from \begin{lstlisting}[caption={...}]
+    -- into the CodeBlock's attributes table.  Use it as the display text so
+    -- that \ref{label} renders the caption rather than a generic counter.
+    local cap = el.attr and el.attr.attributes and el.attr.attributes["caption"]
     labels[label] = {
       file    = current_file(),
       anchor  = label,
       type    = "listing",
       number  = num,
-      display = "código " .. num,
+      display = (cap and cap ~= "") and cap or ("código " .. num),
     }
   end
 end
@@ -336,7 +340,8 @@ function RawBlock(el)
         counters.listing = counters.listing + 1
         num     = counters.chapter .. "." .. counters.listing
         ltype   = "listing"
-        display = "código " .. num
+        local cap = el.text:match("caption%s*=%s*%{([^}]*)%}")
+        display = (cap and cap ~= "") and cap or ("código " .. num)
       end
       labels[label] = {
         file    = current_file(),

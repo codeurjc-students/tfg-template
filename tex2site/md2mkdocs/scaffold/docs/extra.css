@@ -1,0 +1,98 @@
+/*
+ * extra.css — Overrides for the Material for MkDocs theme 
+ */
+
+/* ---- Institutional color palette ---------------------------------- */
+:root {
+  --md-primary-fg-color:        #0558AE;  /* pblue  */
+  --md-primary-fg-color--light: #3a7fd4;
+  --md-primary-fg-color--dark:  #0A3069;  /* pdarkblue */
+  --md-accent-fg-color:         #CF222E;  /* pred */
+
+  --color-violet:  #6639BA;  /* pviolet */
+  --color-green:   #008000;  /* pgreen */
+  --color-grey:    #59636E;  /* pgrey */
+}
+
+/* ---- Code blocks ------------------------------------------------ */
+/* Highlight Java annotations (~...~) */
+.highlight .n   { color: var(--md-primary-fg-color); }
+/* Keywords in red */
+.highlight .k,
+.highlight .kd  { color: #CF222E; }
+/* Strings in dark blue */
+.highlight .s,
+.highlight .s2  { color: #0A3069; }
+/* Comments in grey */
+.highlight .c,
+.highlight .c1  { color: #59636E; font-style: italic; }
+
+/* ---- Tables ----------------------------------------------------------- */
+.md-typeset table:not([class]) {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: #fff;
+}
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(5, 88, 174, 0.06);
+}
+
+.md-typeset table:not([class]) td {
+  padding: 0.5em 0.75em;
+}
+
+/* Centre the <dt> block that Pandoc wraps around the <table> */
+.md-typeset dl > dt {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Figure and table captions ------------------------------------ */
+.md-typeset figcaption,
+.md-typeset p.table-caption,
+.md-typeset dl > dd > p {
+  font-size: 0.85em;
+  font-style: italic;
+  color: var(--color-grey);
+  text-align: center;
+  margin-top: 0.3rem;
+}
+
+/* ---- Avoid centering code block text ------------------------------- */
+.md-typeset figure {
+    text-align: left;
+}
+
+/* ---- Unresolved reference warnings ------------------------- */
+.ref-unresolved {
+  color: #CF222E;
+  font-style: italic;
+}
+
+/* ---- Cover header (index.md) ----------------------------------- */
+.tfg-cover {
+  text-align: center;
+  padding: 2rem 0;
+}
+.tfg-cover img {
+  max-width: 220px;
+  margin-bottom: 1.5rem;
+}
+.tfg-cover h1 {
+  font-size: 1.6rem;
+  color: var(--md-primary-fg-color--dark);
+}
+.tfg-cover .meta {
+  color: var(--color-grey);
+  font-size: 0.95rem;
+}
+
+/* Remove left margin from Pandoc's <dl><dd> table-caption wrapper */
+[dir=ltr] .md-typeset dl > dd {
+  margin-left: 0;
+}

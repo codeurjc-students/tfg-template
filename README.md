@@ -44,8 +44,8 @@ Se recomienda utilizar [VSCode](https://code.visualstudio.com/) haciendo uso de 
 4. Reabre el repositorio en un contenedor ejecutando `Dev Containers: Reopen in Container` en la paleta de comandos de VSCode. Ojo que este comando descargará la imagen `codeurjc/tfg-latex` que ocupa 4.78GB.
 
 NOTA: Las operaciones git dentro del contenedor no funcionan correctamente. Está pendiente de solucionar estos problemas para que funcione bien:
-   * Obtener las clases de git del host
-   * Ejecutar el contenedor con los permisos del usuario para que los ficheros no sean de root
+   * Obtener las claves de git del host
+   * Ejecutar el contenedor con los permisos del usuario para que los ficheros no sean de root en linux
 
 #### Instalación nativa de LaTeX (no recomendado)
 
@@ -57,13 +57,11 @@ Aunque hay muchas distribuciones de LaTeX, se recomienda instalar [TexLive](http
 * [Instalar en Windows](https://www.tug.org/texlive/windows.html)
 * [Instalar en MacOS](https://www.tug.org/mactex/)
 
-## Generación de una página web partiendo de la memoria
+## Generación de una página web
 
-Se proporciona una herramienta para generar un sitio web con el contenido de la memoria. 
+La herramienta [tex2site](tex2site/README.md) permite generar un sitio web con el contenido de la memoria. 
 
 Esta página web permite una lectura mucho más adecuada en dispositivos digitales que el PDF (ajuste de tamaño de letra, se evita la separación de páginas, mejor salto entre referencias, etc.)
-
-[Instrucciones para generar la web](WEB.md)
 
 ## Diferencias de esta plantilla respecto a la plantilla oficial de la ETSII
 
